@@ -3,7 +3,7 @@ Class BeI.Category Extends %Persistent
 
 Property Name As %String;
 
-Property Attribute As array Of BeI.Attribute;
+Property Attributes As array Of BeI.Attribute;
 
 Storage Default
 {
@@ -11,6 +11,11 @@ Storage Default
 <Attribute>Attribute</Attribute>
 <Structure>subnode</Structure>
 <Subscript>"Attribute"</Subscript>
+</Data>
+<Data name="Attributes">
+<Attribute>Attributes</Attribute>
+<Structure>subnode</Structure>
+<Subscript>"Attributes"</Subscript>
 </Data>
 <Data name="CategoryDefaultData">
 <Value name="1">
