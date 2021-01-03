@@ -1,15 +1,36 @@
 Class BeI.Product Extends (%Persistent, %Populate)
 {
 
-Property Name As %String(POPSPEC = "Product()");
+Property Name As %String(POPORDER = 1, POPSPEC = ".PopulateName()");
 
-Property Price As %Numeric;
+Property Price As %Numeric(POPORDER = 2, POPSPEC = "Float(0,500)");
 
-Property Category As BeI.Category;
+Property Category As BeI.Category(POPORDER = 3);
 
-Property BitString As %String;
+Property BitString As %String(POPORDER = 4);
 
-Property Attributes As array Of BeI.AttributeValue;
+Property Attributes As array Of BeI.AttributeValue(POPORDER = 5, POPSPEC = ".PopulateAttributes()");
+
+Method PopulateName() As %String
+{
+    return ##class(%Library.PopulateUtils).Product()_" "_##class(%Library.PopulateUtils).String(10)
+}
+
+Method PopulateAttributes() As %Collection.ArrayOfObj
+{
+    s result = ##class(%Collection.ArrayOfObj).%New()
+    s key = "",i = 0
+    s cat = ##class(BeI.Category).%OpenId(i%Category)
+    s attr = cat.Attributes.GetNext(.key)
+    while key'="" {
+        s posibilities = attr.GetValues(.l)
+        s x = $RANDOM(posibilities)
+        s obj = ##class(BeI.AttributeValue).%OpenId(l(x))
+        d result.SetAt(obj,i)
+        s attr = cat.Attributes.GetNext(.key),i = i + 1
+    }
+    return result
+}
 
 Storage Default
 {

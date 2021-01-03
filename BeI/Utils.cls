@@ -13,16 +13,16 @@ ClassMethod BuildFirstTestSet() As %Status
         s attrScreensize = ##class(BeI.Utils).NewAttribute("Screen size")
         s attrCPU = ##class(BeI.Utils).NewAttribute("CPU")
         // add attributes to categories 
-        d catTV.Attributes.SetAt(0,attrEnergyClass)
-        d catTV.Attributes.SetAt(1,attrScreensize)
+        d catTV.Attributes.SetAt(attrEnergyClass,0)
+        d catTV.Attributes.SetAt(attrScreensize,1)
         d catTV.%Save()
-        d catLaptop.Attributes.SetAt(0,attrEnergyClass)
-        d catLaptop.Attributes.SetAt(1,attrScreensize)
-        d catLaptop.Attributes.SetAt(2,attrCPU)
+        d catLaptop.Attributes.SetAt(attrEnergyClass,0)
+        d catLaptop.Attributes.SetAt(attrScreensize,1)
+        d catLaptop.Attributes.SetAt(attrCPU,2)
         d catLaptop.%Save()        
-        d catTablet.Attributes.SetAt(0,attrEnergyClass)
-        d catTablet.Attributes.SetAt(1,attrScreensize)
-        d catTablet.Attributes.SetAt(2,attrCPU)
+        d catTablet.Attributes.SetAt(attrEnergyClass,0)
+        d catTablet.Attributes.SetAt(attrScreensize,1)
+        d catTablet.Attributes.SetAt(attrCPU,2)
         d catTablet.%Save()
         // Populate attribute values
         s x = ##class(BeI.AttributeValue).%New()
@@ -51,72 +51,72 @@ ClassMethod BuildFirstTestSet() As %Status
         s x.Value = 1
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrScreensize
         s x.Name = "10 inch"
         s x.Value = 2
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrScreensize
         s x.Name = "12 inch"
         s x.Value = 3
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrScreensize
         s x.Name = "14 inch"
         s x.Value = 4
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrScreensize
         s x.Name = "15 inch"
         s x.Value = 5
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrScreensize
         s x.Name = "17 inch"
         s x.Value = 6
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrScreensize
         s x.Name = "28 inch"
         s x.Value = 7
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrScreensize
         s x.Name = "32 inch"
         s x.Value = 8
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrScreensize
         s x.Name = "34 inch"
         s x.Value = 9
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrScreensize
         s x.Name = "55 inch"
         s x.Value = 10
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrCPU
         s x.Name = "Intel I3"
         s x.Value = 1
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrCPU
         s x.Name = "Intel I5"
         s x.Value = 2
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrCPU
         s x.Name = "Intel I7"
         s x.Value = 3
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrCPU
         s x.Name = "AMD Ryzen"
         s x.Value = 4
         d x.%Save()
         s x = ##class(BeI.AttributeValue).%New()
-        s x.Attribute = attrEnergyClass
+        s x.Attribute = attrCPU
         s x.Name = "Snapdragon"
         s x.Value = 5
         d x.%Save()

@@ -3,6 +3,24 @@ Class BeI.Attribute Extends %Persistent
 
 Property Name As %String;
 
+Method GetValues(ByRef list) As %Integer
+{
+    k list
+    s result=0
+    s attrId = ..%Id()
+    &SQL(declare attrs cursor for select id into:Id from BeI.AttributeValue where Attribute = :attrId)
+    &SQL(open attrs)
+    while 'SQLCODE {
+        &sql(fetch attrs)
+        i 'SQLCODE,Id'="" {
+            s list(result)=Id
+            s result = result + 1
+        }
+    }
+    &SQL(close attrs)
+    return result
+}
+
 Storage Default
 {
 <Data name="AttributeDefaultData">
