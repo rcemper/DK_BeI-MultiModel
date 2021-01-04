@@ -16,17 +16,16 @@ Method PopulateName() As %String
     return ##class(%Library.PopulateUtils).Product()_" "_##class(%Library.PopulateUtils).String(10)
 }
 
-Method PopulateAttributes() As %Collection.ArrayOfObj
+Method PopulateAttributes() As %Library.ArrayOfObjects
 {
-    s result = ##class(%Collection.ArrayOfObj).%New()
+    s result = ##class(%Library.ArrayOfObjects).%New()
     s key = "",i = 0
     s cat = ##class(BeI.Category).%OpenId(i%Category)
     s attr = cat.Attributes.GetNext(.key)
     while key'="" {
-        s posibilities = attr.GetValues(.l)
-        s x = $RANDOM(posibilities)
-        s obj = ##class(BeI.AttributeValue).%OpenId(l(x))
-        d result.SetAt(obj,i)
+        s posibilities = attr.GetValues()
+        s x = $RANDOM(posibilities.Count()-1)
+        d result.SetAt(posibilities.GetAt(x),i)
         s attr = cat.Attributes.GetNext(.key),i = i + 1
     }
     return result

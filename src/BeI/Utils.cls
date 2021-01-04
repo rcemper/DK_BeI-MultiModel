@@ -1,9 +1,23 @@
 Class BeI.Utils Extends %RegisteredObject
 {
 
+ClassMethod ResetDB() As %Status
+{
+    k ^BeI.AttributeValueD
+    k ^BeI.AttributeValueI
+    k ^BeI.AttributeD
+    k ^BeI.AttributeI
+    k ^BeI.CategoryD
+    k ^BeI.CategoryI
+    k ^BeI.ProductD
+    k ^BeI.ProductI
+    return $$$OK
+}
+
 ClassMethod BuildFirstTestSet() As %Status
 {
         set ok = $$$OK
+        d ##class(BeI.Utils).ResetDB()
         // populate categories
         s catTV = ##class(BeI.Utils).NewCategory("TV") 
         s catLaptop = ##class(BeI.Utils).NewCategory("Laptop") 
@@ -121,7 +135,14 @@ ClassMethod BuildFirstTestSet() As %Status
         s x.Value = 5
         d x.%Save()
         // populate products
-        d ##class(BeI.Product).Populate()
+        d ##class(BeI.Product).Populate(100)
+        for i=1:1:100 {
+            s oref=##class(BeI.Product).%OpenId(i)
+            i oref {
+                s oref.Attributes=oref.PopulateAttributes()
+                d oref.%Save(0)
+            }
+        }
         // return overal status
         return ok
 }

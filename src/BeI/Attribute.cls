@@ -3,18 +3,18 @@ Class BeI.Attribute Extends %Persistent
 
 Property Name As %String;
 
-Method GetValues(ByRef list) As %Integer
+Method GetValues() As %Library.ArrayOfObjects
 {
     k list
-    s result=0
-    s attrId = ..%Id()
+    s result=##class(%Library.ArrayOfObjects).%New()
+    s attrId = ..%Id(),i=0
     &SQL(declare attrs cursor for select id into:Id from BeI.AttributeValue where Attribute = :attrId)
     &SQL(open attrs)
     while 'SQLCODE {
         &sql(fetch attrs)
         i 'SQLCODE,Id'="" {
-            s list(result)=Id
-            s result = result + 1
+            d result.SetAt(##class(BeI.AttributeValue).%OpenId(Id),i)
+            s i = i + 1
         }
     }
     &SQL(close attrs)
