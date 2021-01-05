@@ -5,6 +5,40 @@ Property Name As %String;
 
 Property Attributes As array Of BeI.Attribute;
 
+Property BitStringPosition As %Numeric;
+
+ClassMethod GetAllCategories() As %Library.ArrayOfObjects
+{
+    s result = ##class(%ArrayOfObjects).%New(),i=0
+    &SQL(DECLARE allCats CURSOR FOR SELECT id INTO :id FROM BeI.Category)
+    &SQL(OPEN allCats)
+    while 'SQLCODE {
+        &SQL(FETCH allCats)
+        i 'SQLCODE,id'="" {
+            d result.SetAt(##class(BeI.Category).%OpenId(id),i)
+            s i=i+1
+        }
+    }
+    &SQL(CLOSE allCats)
+    return result
+}
+
+ClassMethod CategoriesWithoutPosition() As %Library.ArrayOfObjects
+{
+    s result = ##class(%ArrayOfObjects).%New(),i=0
+    &SQL(DECLARE noPosCats CURSOR FOR SELECT id INTO :id FROM BeI.Category WHERe BitStringPosition IS NULL)
+    &SQL(OPEN noPosCats)
+    while 'SQLCODE {
+        &SQL(FETCH noPosCats)
+        i 'SQLCODE,id'="" {
+            d result.SetAt(##class(BeI.Category).%OpenId(id),i)
+            s i=i+1
+        }
+    }
+    &SQL(CLOSE noPosCats)
+    return result
+}
+
 Storage Default
 {
 <Data name="Attribute">
@@ -23,6 +57,9 @@ Storage Default
 </Value>
 <Value name="2">
 <Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>BitStringPosition</Value>
 </Value>
 </Data>
 <DataLocation>^BeI.CategoryD</DataLocation>

@@ -11,6 +11,22 @@ Property BitString As %String(POPORDER = 4);
 
 Property Attributes As array Of BeI.AttributeValue(POPORDER = 5, POPSPEC = ".PopulateAttributes()");
 
+ClassMethod GetProductsByCategoryId(categoryId As %String) As %ArrayOfObjects
+{
+    s result = ##class(%ArrayOfObjects).%New(),i=0
+    &SQL(DECLARE prodByCat CURSOR FOR SELECT id INTO :id FROM BeI.Product WHERE Category=:categoryId)
+    &SQL(OPEN prodByCat)
+    while 'SQLCODE {
+        &SQL(FETCH prodByCat)
+        i 'SQLCODE,id'="" {
+            d result.SetAt(##class(BeI.Product).%OpenId(id),i)
+            s i=i+1
+        }
+    }
+    &SQL(CLOSE prodByCat)
+    return result
+}
+
 Method PopulateName() As %String
 {
     return ##class(%Library.PopulateUtils).Product()_" "_##class(%Library.PopulateUtils).String(10)

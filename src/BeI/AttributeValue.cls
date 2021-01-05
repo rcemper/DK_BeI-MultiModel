@@ -11,6 +11,22 @@ Property ProductCount As %Numeric;
 
 Property BitStringPosition As %Numeric;
 
+ClassMethod AttributeValuesWithoutPosition() As %Library.ArrayOfObjects
+{
+    s result = ##class(%ArrayOfObjects).%New(),i=0
+    &SQL(DECLARE noPosAttrVal CURSOR FOR SELECT id INTO :id FROM BeI.BeI.AttributeValue WHERe BitStringPosition IS NULL)
+    &SQL(OPEN noPosAttrVal)
+    while 'SQLCODE {
+        &SQL(FETCH noPosAttrVal)
+        i 'SQLCODE,id'="" {
+            d result.SetAt(##class(BeI.AttributeValue).%OpenId(id),i)
+            s i=i+1
+        }
+    }
+    &SQL(CLOSE noPosAttrVal)
+    return result
+}
+
 Storage Default
 {
 <Data name="AttributeValueDefaultData">
