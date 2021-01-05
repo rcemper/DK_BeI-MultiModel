@@ -27,6 +27,43 @@ ClassMethod GetProductsByCategoryId(categoryId As %String) As %ArrayOfObjects
     return result
 }
 
+ClassMethod GetAllProducts() As %ArrayOfObjects
+{
+    s result = ##class(%ArrayOfObjects).%New(),i=0
+    &SQL(DECLARE allProds CURSOR FOR SELECT id INTO :id FROM BeI.Product)
+    &SQL(OPEN allProds)
+    while 'SQLCODE {
+        &SQL(FETCH allProds)
+        i 'SQLCODE,id'="" {
+            d result.SetAt(##class(BeI.Product).%OpenId(id),i)
+            s i=i+1
+        }
+    }
+    &SQL(CLOSE allProds)
+    return result
+}
+
+Method SetBitstring() As %Status
+{
+    set ok = $$$OK
+    set BitString=""
+    s len=##class(BeI.Agent).GetLastBitstringPosition()
+    for i = 1:1:len {
+        s $BIT(BitString, i) = 0
+    }
+    if (..Category '= $$$NULLOREF){
+        s $BIT(BitString,..Category.BitStringPosition)=1
+    }
+    s attr = ..Attributes.GetNext(.key)
+    while key'="" {
+        s $BIT(BitString,attr.BitStringPosition)=1
+        s attr = ..Attributes.GetNext(.key)
+    }
+    s ..BitString=BitString
+    d ..%Save(0)
+    return ok
+}
+
 Method PopulateName() As %String
 {
     return ##class(%Library.PopulateUtils).Product()_" "_##class(%Library.PopulateUtils).String(10)

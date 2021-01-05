@@ -14,18 +14,29 @@ ClassMethod ResetDB() As %Status
     return $$$OK
 }
 
-ClassMethod BuildFirstTestSet() As %Status
+ClassMethod BuildFirstTestSet(size As %Integer = 100) As %Status
 {
         set ok = $$$OK
+        w "Resetting DB",!
+        s start=$zh
         d ##class(BeI.Utils).ResetDB()
+        w "DB reset done in: ",$zh-start,!
+        w "Populating categories",!
+        s start=$zh
         // populate categories
         s catTV = ##class(BeI.Utils).NewCategory("TV") 
         s catLaptop = ##class(BeI.Utils).NewCategory("Laptop") 
         s catTablet = ##class(BeI.Utils).NewCategory("Tablet") 
+        w "Categories populated in: ",$zh-start,!
+        w "Populating Attributes",!
+        s start=$zh
         // populate attributes
         s attrEnergyClass = ##class(BeI.Utils).NewAttribute("Energy class")
         s attrScreensize = ##class(BeI.Utils).NewAttribute("Screen size")
         s attrCPU = ##class(BeI.Utils).NewAttribute("CPU")
+        w "Attributes populated in: ",$zh-start,!
+        w "Adding Attributes to categories",!
+        s start=$zh
         // add attributes to categories 
         d catTV.Attributes.SetAt(attrEnergyClass,0)
         d catTV.Attributes.SetAt(attrScreensize,1)
@@ -38,6 +49,9 @@ ClassMethod BuildFirstTestSet() As %Status
         d catTablet.Attributes.SetAt(attrScreensize,1)
         d catTablet.Attributes.SetAt(attrCPU,2)
         d catTablet.%Save()
+        w "Attributes linked to categories in: ",$zh-start,!
+        w "Populating attribute values",!
+        s start=$zh
         // Populate attribute values
         s x = ##class(BeI.AttributeValue).%New()
         s x.Attribute = attrEnergyClass
@@ -134,8 +148,11 @@ ClassMethod BuildFirstTestSet() As %Status
         s x.Name = "Snapdragon"
         s x.Value = 5
         d x.%Save()
+        w "Attribute values populated in: ",$zh-start,!
+        w "Populating products",!
+        s start=$zh
         // populate products
-        d ##class(BeI.Product).Populate(100)
+        d ##class(BeI.Product).Populate(size)
         for i=1:1:100 {
             s oref=##class(BeI.Product).%OpenId(i)
             i oref {
@@ -143,6 +160,12 @@ ClassMethod BuildFirstTestSet() As %Status
                 d oref.%Save(0)
             }
         }
+        w "products populated in: ",$zh-start,!
+        w "running Agent",!
+        s start=$zh
+        // Run the agent
+        d ##class(BeI.Agent).Run()
+        w "Agent ran for: ",$zh-start,!
         // return overal status
         return ok
 }
@@ -162,6 +185,13 @@ ClassMethod NewAttribute(Name As %String) As BeI.Attribute
     s attr.Name = Name
     d attr.%Save()
     return attr
+}
+
+ClassMethod ShowBitstring(bs) As %String
+{
+    s result=""
+    for i=1:1:$BITCOUNT(bs) { s result=result_$bit(bs, i) }
+    return result
 }
 
 }
