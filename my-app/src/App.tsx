@@ -4,6 +4,7 @@ import './App.css';
 import { Helmet } from "react-helmet";
 import { Header } from "./components/Header";
 import { Product } from "./components/Product";
+import { Filter } from "./components/Filter";
 import {products, filters} from "./mocks";
 
 function App() {
@@ -24,9 +25,15 @@ return (
   <Header/>
   <div className="container--xxl .mt-2">
     <div className="row">
-      <div className="col-sm-3 border">Filters</div>
+      <div className="col-sm-3 border">
+        {state.filters.map(
+            (filter) => (
+              <Filter key={filter.id} filter={filter} />
+            )
+          )}        
+      </div>
       <div className="col-sm-9 border">
-        <div className="row row-cols-3">
+        <div className="row row-cols-4 gap-3">
           {state.products.map(
             (product) => (
               <Product key={product.id} product={product} />
