@@ -14,7 +14,7 @@ Property BitStringPosition As %Numeric;
 ClassMethod AttributeValuesWithoutPosition() As %Library.ArrayOfObjects
 {
     s result = ##class(%ArrayOfObjects).%New(),i=0
-    &SQL(DECLARE noPosAttrVal CURSOR FOR SELECT id INTO :id FROM BeI.BeI.AttributeValue WHERe BitStringPosition IS NULL)
+    &SQL(DECLARE noPosAttrVal CURSOR FOR SELECT id INTO :id FROM BeI.AttributeValue WHERe BitStringPosition IS NULL)
     &SQL(OPEN noPosAttrVal)
     while 'SQLCODE {
         &SQL(FETCH noPosAttrVal)
