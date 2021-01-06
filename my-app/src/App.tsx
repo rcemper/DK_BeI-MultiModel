@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { Helmet } from "react-helmet";
-import { Header } from "./components/Header"
+import { Header } from "./components/Header";
+import { Product } from "./components/Product";
+import {products, filters} from "./mocks";
 
 function App() {
+  const [state,updateState] = useState({products:products, searchTerm:"", filters: filters});
 return (
 <div className="App">
   <Helmet>
@@ -22,7 +25,15 @@ return (
   <div className="container--xxl .mt-2">
     <div className="row">
       <div className="col-sm-3 border">Filters</div>
-      <div className="col-sm-9 border">Products</div>
+      <div className="col-sm-9 border">
+        <div className="row row-cols-3">
+          {state.products.map(
+            (product) => (
+              <Product key={product.id} product={product} />
+            )
+          )}
+        </div>
+      </div>
     </div>
   </div>
   </div>
