@@ -11,6 +11,7 @@ ClassMethod ResetDB() As %Status
     k ^BeI.CategoryI
     k ^BeI.ProductD
     k ^BeI.ProductI
+    k ^BeILastBitstringPosition
     return $$$OK
 }
 
