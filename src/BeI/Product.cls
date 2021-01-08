@@ -84,6 +84,22 @@ Method PopulateAttributes() As %Library.ArrayOfObjects
     return result
 }
 
+Method GetDynamicProduct() As %DynamicObject
+{
+    set result= {}
+    set result.name=..Name
+    set result.category=..Category.Name
+    set result.id=..%Id()
+    set result.price=..Price
+    s result.attributes=[]
+    s attr = ..Attributes.GetNext(.key)
+    while key'="" {
+        d result.attributes.%Push(attr.GetDynamicAttributeValue())
+        s attr = ..Attributes.GetNext(.key)
+    }
+    return result
+}
+
 Storage Default
 {
 <Data name="Attributes">

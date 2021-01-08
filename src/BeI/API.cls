@@ -7,6 +7,7 @@ XData UrlMap
 {
 <Routes>
     <Route Url="/filters" Method="GET" Call="Filters" Cors="false" />
+    <Route Url="/products/:sort/:searchTerm/:pageSize/:lastId" Method="GET" Call="Products" Cors="false" />
 </Routes>
 }
 
@@ -62,6 +63,52 @@ ClassMethod AttributeFilters(filters As %DynamicArray) As %DynamicArray
         s attr = attributes.GetNext(.key)
     }
     return filters
+}
+
+ClassMethod Products(sort as %String, searchTerm as %String,pageSize as %Integer, lastId as %String) As %Status
+{
+    s result=[]
+    s filter=##class(BeI.API).GetFilter()
+    s count=0
+    s index=$ORDER(^INDEX("SORTORDER",sort,lastId),1,value)
+    while count<pageSize,index'="" {
+        if ##class(BeI.API).TestFilter(filter,value){
+            s oProd=##class(BeI.API).GetProductFromIndex(index)
+            i oProd.Name[searchTerm {
+                d result.%Push(oProd.GetDynamicProduct())
+                s count=count+1
+            }
+        }
+        s index=$ORDER(^INDEX("SORTORDER",sort,index),1,value)
+    }
+    w result.%ToJSON()
+    return $$$OK
+}
+
+ClassMethod GetFilter() As %String
+{
+    set filter=""
+    s len=##class(BeI.Agent).GetLastBitstringPosition()
+    for i = 1:1:len {
+        s $BIT(filter, i) = 0
+    }
+    return filter
+}
+
+ClassMethod TestFilter(filter as %String,value as %String) As %Boolean
+{
+    set match = 0
+    set test=$bitlogic(filter&value)
+    set match=(value=test)
+    return match
+}
+
+ClassMethod GetProductFromIndex(index as %String) As BeI.Product
+{
+    set result =$$$NULLOREF
+    s id=+$e(index,*-7,*)
+    i id'="" { s result=##class(BeI.Product).%OpenId(id) }
+    return result   
 }
 
 }

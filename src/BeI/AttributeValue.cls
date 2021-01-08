@@ -27,6 +27,14 @@ ClassMethod AttributeValuesWithoutPosition() As %Library.ArrayOfObjects
     return result
 }
 
+MEthod GetDynamicAttributeValue() as %DynamicObject
+{
+    s result={}
+    s result.name=..Name
+    s result.value=..Value
+    return result
+}
+
 Storage Default
 {
 <Data name="AttributeValueDefaultData">
