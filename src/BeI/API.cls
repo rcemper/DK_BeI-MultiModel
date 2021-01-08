@@ -65,7 +65,7 @@ ClassMethod AttributeFilters(filters As %DynamicArray) As %DynamicArray
     return filters
 }
 
-ClassMethod Products(sort as %String, searchTerm as %String,pageSize as %Integer, lastId as %String) As %Status
+ClassMethod Products(sort As %String, searchTerm As %String, pageSize As %Integer, lastId As %String) As %Status
 {
     s result=[]
     s filter=##class(BeI.API).GetFilter()
@@ -85,17 +85,26 @@ ClassMethod Products(sort as %String, searchTerm as %String,pageSize as %Integer
     return $$$OK
 }
 
-ClassMethod GetFilter() As %String
+ClassMethod GetFilter() As %String [ PublicList = %request ]
 {
     set filter=""
     s len=##class(BeI.Agent).GetLastBitstringPosition()
     for i = 1:1:len {
         s $BIT(filter, i) = 0
     }
+    s obj = {}.%FromJSON(%request.Content.Read())
+    //set json = $ZCONVERT(%request.Content.Read(),"I","UTF8")
+	//set filterData = {}.%FromJSON(json)
+    //write filterData.%ToJSON()
+    
+    /*if filterData'="" {
+        
+        
+    }*/
     return filter
 }
 
-ClassMethod TestFilter(filter as %String,value as %String) As %Boolean
+ClassMethod TestFilter(filter As %String, value As %String) As %Boolean
 {
     set match = 0
     set test=$bitlogic(filter&value)
@@ -103,12 +112,12 @@ ClassMethod TestFilter(filter as %String,value as %String) As %Boolean
     return match
 }
 
-ClassMethod GetProductFromIndex(index as %String) As BeI.Product
+ClassMethod GetProductFromIndex(index As %String) As BeI.Product
 {
     set result =$$$NULLOREF
     s id=+$e(index,*-7,*)
     i id'="" { s result=##class(BeI.Product).%OpenId(id) }
-    return result   
+    return result
 }
 
 }
