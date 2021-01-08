@@ -14,7 +14,7 @@ Property BitStringPosition As %Numeric;
 ClassMethod AttributeValuesWithoutPosition() As %Library.ArrayOfObjects
 {
     s result = ##class(%ArrayOfObjects).%New(),i=0
-    &SQL(DECLARE noPosAttrVal CURSOR FOR SELECT id INTO :id FROM BeI.BeI.AttributeValue WHERe BitStringPosition IS NULL)
+    &SQL(DECLARE noPosAttrVal CURSOR FOR SELECT id INTO :id FROM BeI.AttributeValue WHERe BitStringPosition IS NULL)
     &SQL(OPEN noPosAttrVal)
     while 'SQLCODE {
         &SQL(FETCH noPosAttrVal)
@@ -24,6 +24,14 @@ ClassMethod AttributeValuesWithoutPosition() As %Library.ArrayOfObjects
         }
     }
     &SQL(CLOSE noPosAttrVal)
+    return result
+}
+
+MEthod GetDynamicAttributeValue() as %DynamicObject
+{
+    s result={}
+    s result.name=..Name
+    s result.value=..Value
     return result
 }
 

@@ -28,4 +28,11 @@ To set up the API, some steps need to be taken:
    * Click the "Create New Web Application"
    * Fill out these field:
       * Name: /BeI
+      * Description: *optional*
+      * Namespace: USER
+      * Enable Application: checked
+      * Enable: choose REST
+      * Dispatch Class: BeI.API
+   * Click the "Save" Button
+
 

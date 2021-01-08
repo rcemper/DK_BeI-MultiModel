@@ -21,6 +21,22 @@ Method GetValues() As %Library.ArrayOfObjects
     return result
 }
 
+ClassMethod GetAttributes() As %ArrayOfObjects
+{
+    s result = ##class(%ArrayOfObjects).%New(),i=0
+    &SQL(DECLARE attrs CURSOR FOR SELECT id INTO :id FROM BeI.Attribute)
+    &SQL(OPEN attrs)
+    while 'SQLCODE {
+        &SQL(FETCH attrs)
+        i 'SQLCODE,id'="" {
+            d result.SetAt(##class(BeI.Attribute).%OpenId(id),i)
+            s i=i+1
+        }
+    }
+    &SQL(CLOSE attrs)
+    return result
+}
+
 Storage Default
 {
 <Data name="AttributeDefaultData">
