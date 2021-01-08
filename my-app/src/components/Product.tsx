@@ -6,7 +6,7 @@ interface IProductProps {
 }
 export function Product({ product }: IProductProps ) {
     return (
-        <div className="card col">
+        <div className="card col gx-5">
           <img src="logo512.png" className="card-img-top" alt="..."/>
           <div className="card-body">
             <h5 className="card-title">{product.name}</h5>

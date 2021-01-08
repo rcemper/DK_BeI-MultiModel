@@ -6,9 +6,16 @@ import { Header } from "./components/Header";
 import { Product } from "./components/Product";
 import { Filter } from "./components/Filter";
 import {products, filters} from "./mocks";
+import { IProduct } from './types';
+import {doesProductNameContain} from "./utils";
 
 function App() {
   const [state,updateState] = useState({products:products, searchTerm:"", filters: filters});
+  function onSearch(searchTerm : string) {
+    const newProducts: IProduct[] = products.filter((product) =>
+              doesProductNameContain(product,searchTerm))
+    updateState({...state, products:newProducts, searchTerm:searchTerm});
+  }
 return (
 <div className="App">
   <Helmet>
@@ -22,10 +29,10 @@ return (
       integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossOrigin="anonymous">
     </script>
   </Helmet>
-  <Header/>
-  <div className="container--xxl .mt-2">
+  <Header searchCallback={onSearch}/>
+  <div className="container--xxl .mt-2 px-4">
     <div className="row">
-      <div className="col-sm-3 border">
+      <div className="col-sm-3 border px-4">
         {state.filters.map(
             (filter) => (
               <Filter key={filter.id} filter={filter} />
@@ -33,7 +40,7 @@ return (
           )}        
       </div>
       <div className="col-sm-9 border">
-        <div className="row row-cols-4 gap-3">
+        <div className="row row-cols-3 px-4">
           {state.products.map(
             (product) => (
               <Product key={product.id} product={product} />
