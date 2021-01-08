@@ -9,7 +9,7 @@ export const products: IProduct[] = [
       { 
         "id" : 2,
         "category_id" : 1,
-        "name": "product 2"
+        "name": "product 21"
       },
       { 
         "id" : 3,

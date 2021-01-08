@@ -1,6 +1,7 @@
 import React from 'react';
+import {Search} from "./Search";
 
-export function Header() {
+export function Header({searchCallback}: { searchCallback: (searchTerms: string) => void }) {
   return (
   <header>
   <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -19,10 +20,7 @@ export function Header() {
             <a className="nav-link" href="#">Link</a>
           </li>
         </ul>
-        <form className="d-flex">
-          <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-          <button className="btn btn-outline-success" type="submit">Search</button>
-        </form>
+        <Search searchCallback={searchCallback}/>
       </div>
     </div>
   </nav>
