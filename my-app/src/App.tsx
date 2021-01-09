@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { Helmet } from "react-helmet";
 import { Header } from "./components/Header";
 import { Product } from "./components/Product";
 import { Filter } from "./components/Filter";
 import {products, filters} from "./mocks";
 import { IFilter, IProduct } from './types';
 import {doesProductNameContain,changeFilterOptionChecked} from "./utils";
+import { Helmet } from 'react-helmet-async';
 
 function App() {
   const [state,updateState] = useState({products:products, searchTerm:"", filters: filters});
