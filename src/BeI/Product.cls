@@ -13,14 +13,14 @@ Property Attributes As array Of BeI.AttributeValue(POPORDER = 5, POPSPEC = ".Pop
 
 ClassMethod GetProductsByCategoryId(categoryId As %String) As %ArrayOfObjects
 {
-    s result = ##class(%ArrayOfObjects).%New(),i=0
+    set result = ##class(%ArrayOfObjects).%New(),i = 0
     &SQL(DECLARE prodByCat CURSOR FOR SELECT id INTO :id FROM BeI.Product WHERE Category=:categoryId)
     &SQL(OPEN prodByCat)
     while 'SQLCODE {
         &SQL(FETCH prodByCat)
-        i 'SQLCODE,id'="" {
-            d result.SetAt(##class(BeI.Product).%OpenId(id),i)
-            s i=i+1
+        if 'SQLCODE,id '= "" {
+            do result.SetAt(##class(BeI.Product).%OpenId(id),i)
+            set i = i + 1
         }
     }
     &SQL(CLOSE prodByCat)
@@ -29,14 +29,14 @@ ClassMethod GetProductsByCategoryId(categoryId As %String) As %ArrayOfObjects
 
 ClassMethod GetAllProducts() As %ArrayOfObjects
 {
-    s result = ##class(%ArrayOfObjects).%New(),i=0
+    s result = ##class(%ArrayOfObjects).%New(),i = 0
     &SQL(DECLARE allProds CURSOR FOR SELECT id INTO :id FROM BeI.Product)
     &SQL(OPEN allProds)
     while 'SQLCODE {
         &SQL(FETCH allProds)
-        i 'SQLCODE,id'="" {
-            d result.SetAt(##class(BeI.Product).%OpenId(id),i)
-            s i=i+1
+        if 'SQLCODE,id '= "" {
+            do result.SetAt(##class(BeI.Product).%OpenId(id),i)
+            set i = i + 1
         }
     }
     &SQL(CLOSE allProds)
@@ -46,21 +46,21 @@ ClassMethod GetAllProducts() As %ArrayOfObjects
 Method SetBitstring() As %Status
 {
     set ok = $$$OK
-    set BitString=""
-    s len=##class(BeI.Agent).GetLastBitstringPosition()
+    set BitString = ""
+    set len = ##class(BeI.Agent).GetLastBitstringPosition()
     for i = 1:1:len {
-        s $BIT(BitString, i) = 0
+        set $BIT(BitString, i) = 0
     }
     if (..Category '= $$$NULLOREF){
-        s $BIT(BitString,..Category.BitStringPosition)=1
+        set $BIT(BitString,..Category.BitStringPosition) = 1
     }
-    s attr = ..Attributes.GetNext(.key)
+    set attr = ..Attributes.GetNext(.key)
     while key'="" {
-        s $BIT(BitString,attr.BitStringPosition)=1
-        s attr = ..Attributes.GetNext(.key)
+        set $BIT(BitString,attr.BitStringPosition) = 1
+        set attr = ..Attributes.GetNext(.key)
     }
-    s ..BitString=BitString
-    d ..%Save(0)
+    set ..BitString=BitString
+    do ..%Save(0)
     return ok
 }
 
@@ -71,31 +71,32 @@ Method PopulateName() As %String
 
 Method PopulateAttributes() As %Library.ArrayOfObjects
 {
-    s result = ##class(%Library.ArrayOfObjects).%New()
-    s key = "",i = 0
-    s cat = ##class(BeI.Category).%OpenId(i%Category)
-    s attr = cat.Attributes.GetNext(.key)
+    set result = ##class(%Library.ArrayOfObjects).%New()
+    set key = "",i = 0
+    set cat = ##class(BeI.Category).%OpenId(i%Category)
+    set attr = cat.Attributes.GetNext(.key)
     while key'="" {
-        s posibilities = attr.GetValues()
-        s x = $RANDOM(posibilities.Count()-1)
-        d result.SetAt(posibilities.GetAt(x),i)
-        s attr = cat.Attributes.GetNext(.key),i = i + 1
+        set posibilities = attr.GetValues()
+        set x = $RANDOM(posibilities.Count()-1)
+        do result.SetAt(posibilities.GetAt(x),i)
+        set attr = cat.Attributes.GetNext(.key),i = i + 1
     }
     return result
 }
 
 Method GetDynamicProduct() As %DynamicObject
 {
-    set result= {}
-    set result.name=..Name
-    set result.category=..Category.Name
-    set result.id=..%Id()
-    set result.price=..Price
-    s result.attributes=[]
-    s attr = ..Attributes.GetNext(.key)
-    while key'="" {
-        d result.attributes.%Push(attr.GetDynamicAttributeValue())
-        s attr = ..Attributes.GetNext(.key)
+    set result = {}
+    set result.name = ..Name
+    set result.category = ..Category.Name
+    set result.id = ..%Id()
+    set result.bitstring = ##class(BeI.Utils).ShowBitstring(..BitString)
+    set result.price = ..Price
+    set result.attributes = []
+    set attr = ..Attributes.GetNext(.key)
+    while key '= "" {
+        do result.attributes.%Push(attr.GetDynamicAttributeValue())
+        set attr = ..Attributes.GetNext(.key)
     }
     return result
 }
