@@ -6,8 +6,8 @@ import { Header } from "./components/Header";
 import { Product } from "./components/Product";
 import { Filter } from "./components/Filter";
 import {products, filters} from "./mocks";
-import { IProduct } from './types';
-import {doesProductNameContain} from "./utils";
+import { IFilter, IProduct } from './types';
+import {doesProductNameContain,changeFilterOptionChecked} from "./utils";
 
 function App() {
   const [state,updateState] = useState({products:products, searchTerm:"", filters: filters});
@@ -15,6 +15,13 @@ function App() {
     const newProducts: IProduct[] = products.filter((product) =>
               doesProductNameContain(product,searchTerm))
     updateState({...state, products:newProducts, searchTerm:searchTerm});
+  }
+
+  function filterCallBack(name:string, checked: boolean) {
+    const newFilters: IFilter[]= state.filters;
+    changeFilterOptionChecked(newFilters,name,checked);
+    updateState({...state, filters:newFilters});
+    console.log(newFilters);
   }
 return (
 <div className="App">
@@ -35,7 +42,7 @@ return (
       <div className="col-sm-3 border px-4">
         {state.filters.map(
             (filter) => (
-              <Filter key={filter.id} filter={filter} />
+              <Filter key={filter.id} filter={filter} filterCallBack={filterCallBack} />
             )
           )}        
       </div>

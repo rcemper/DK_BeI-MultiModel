@@ -8,17 +8,20 @@ export const filters: IFilter[] = [
           {
             "id" : 1,
             "name": "1-10 inch",
-            "value": 1 
+            "value": 1 ,
+            "checked": false
           },
           {
             "id" : 2,
             "name": "11-20 inch",
-            "value": 2
+            "value": 2,
+            "checked": false
           },
           {
             "id" : 3,
             "name": "21-30 inch",
-            "value": 3
+            "value": 3,
+            "checked": false
           }
         ]
     },
@@ -29,22 +32,26 @@ export const filters: IFilter[] = [
           {
             "id": 4,
             "name": "A++",
-            "value" : 1
+            "value" : 1,
+            "checked": false
           },
           {
             "id": 5,
             "name": "A+",
-            "value" : 2
+            "value" : 2,
+            "checked": false
           },
           {
             "id": 6,
             "name": "A",
-            "value" : 3
+            "value" : 3,
+            "checked": false
           },
           {
             "id": 7,
             "name": "B",
-            "value" : 4
+            "value" : 4,
+            "checked": false
           }
         ]
     }
