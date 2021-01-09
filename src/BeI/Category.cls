@@ -9,14 +9,14 @@ Property BitStringPosition As %Numeric;
 
 ClassMethod GetAllCategories() As %Library.ArrayOfObjects
 {
-    s result = ##class(%ArrayOfObjects).%New(),i=0
+    set result = ##class(%ArrayOfObjects).%New(),i = 0
     &SQL(DECLARE allCats CURSOR FOR SELECT id INTO :id FROM BeI.Category)
     &SQL(OPEN allCats)
     while 'SQLCODE {
         &SQL(FETCH allCats)
-        i 'SQLCODE,id'="" {
-            d result.SetAt(##class(BeI.Category).%OpenId(id),i)
-            s i=i+1
+        if 'SQLCODE,id '= "" {
+            do result.SetAt(##class(BeI.Category).%OpenId(id),i)
+            set i = i + 1
         }
     }
     &SQL(CLOSE allCats)
@@ -25,14 +25,14 @@ ClassMethod GetAllCategories() As %Library.ArrayOfObjects
 
 ClassMethod CategoriesWithoutPosition() As %Library.ArrayOfObjects
 {
-    s result = ##class(%ArrayOfObjects).%New(),i=0
-    &SQL(DECLARE noPosCats CURSOR FOR SELECT id INTO :id FROM BeI.Category WHERe BitStringPosition IS NULL)
+    set result = ##class(%ArrayOfObjects).%New(),i = 0
+    &SQL(DECLARE noPosCats CURSOR FOR SELECT id INTO :id FROM BeI.Category WHERE BitStringPosition IS NULL)
     &SQL(OPEN noPosCats)
     while 'SQLCODE {
         &SQL(FETCH noPosCats)
-        i 'SQLCODE,id'="" {
-            d result.SetAt(##class(BeI.Category).%OpenId(id),i)
-            s i=i+1
+        if 'SQLCODE,id '= "" {
+            do result.SetAt(##class(BeI.Category).%OpenId(id),i)
+            set i = i + 1
         }
     }
     &SQL(CLOSE noPosCats)

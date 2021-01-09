@@ -103,8 +103,8 @@ ClassMethod BuildIndices() As %Status
     s prod = products.GetNext(.key)
     while key'="" {
         s idIndex=prod.%Id()
-        s priceIndex=(prod.Price*10000000)+prod.%Id()
-        s nameIndex = prod.Name_$EXTRACT(10000000+prod.%Id(),2,*)
+        s priceIndex=($j(prod.Price,0,2)*10000000000)+prod.%Id()
+        s nameIndex = prod.Name_$EXTRACT(100000000+prod.%Id(),2,*)
         
         s ^INDEX("SORTORDER","ID",idIndex)=prod.BitString
         s ^INDEX("SORTORDER","PRICE",priceIndex)=prod.BitString

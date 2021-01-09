@@ -5,16 +5,16 @@ Property Name As %String;
 
 Method GetValues() As %Library.ArrayOfObjects
 {
-    k list
-    s result=##class(%Library.ArrayOfObjects).%New()
-    s attrId = ..%Id(),i=0
+    kill list
+    set result = ##class(%Library.ArrayOfObjects).%New()
+    set attrId = ..%Id(),i = 0
     &SQL(declare attrs cursor for select id into:Id from BeI.AttributeValue where Attribute = :attrId)
     &SQL(open attrs)
     while 'SQLCODE {
         &sql(fetch attrs)
-        i 'SQLCODE,Id'="" {
-            d result.SetAt(##class(BeI.AttributeValue).%OpenId(Id),i)
-            s i = i + 1
+        if 'SQLCODE,Id '= "" {
+            do result.SetAt(##class(BeI.AttributeValue).%OpenId(Id),i)
+            set i = i + 1
         }
     }
     &SQL(close attrs)
@@ -23,14 +23,14 @@ Method GetValues() As %Library.ArrayOfObjects
 
 ClassMethod GetAttributes() As %ArrayOfObjects
 {
-    s result = ##class(%ArrayOfObjects).%New(),i=0
+    set result = ##class(%ArrayOfObjects).%New(),i = 0
     &SQL(DECLARE attrs CURSOR FOR SELECT id INTO :id FROM BeI.Attribute)
     &SQL(OPEN attrs)
     while 'SQLCODE {
         &SQL(FETCH attrs)
-        i 'SQLCODE,id'="" {
-            d result.SetAt(##class(BeI.Attribute).%OpenId(id),i)
-            s i=i+1
+        if 'SQLCODE,id '= "" {
+            do result.SetAt(##class(BeI.Attribute).%OpenId(id),i)
+            set i = i + 1
         }
     }
     &SQL(CLOSE attrs)
