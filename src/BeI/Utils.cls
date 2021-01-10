@@ -49,6 +49,18 @@ ClassMethod BuildFirstTestSet(size As %Integer = 100) As %Status
         return ok
 }
 
+ClassMethod WorstCase() As %Status
+{
+    set cat = ##class(BeI.Utils).NewCategory("Worst")
+    set prod = ##class(BeI.Product).%New()
+    set prod.Category = cat
+    set prod.Price = 999
+    set prod.Name = "Worst product ever"
+    do prod.%Save()
+    do ##class(BeI.Agent).Run()    
+    return $$$OK
+}
+
 ClassMethod PopulateFromFile(filename As %String = "/shared/testData.txt") As %Status
 {
     Set stream=##class(%Stream.FileCharacter).%New()
