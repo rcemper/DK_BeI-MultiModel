@@ -75,7 +75,9 @@ ClassMethod AddProducts(ByRef AttrValueCount) As %Status
         &SQL(FETCH products)
         i 'SQLCODE,id '= "" {
             s prod = ##class(BeI.Product).%OpenId(id)
-            do prod.SetBitstring()
+            if (prod.BitString = "") || ($BITCOUNT(prod.BitString) '= ##class(BeI.Agent).GetLastBitstringPosition()) {
+                do prod.SetBitstring()
+            }
             set attr = prod.Attributes.GetNext(.attrKey)
             while attrKey '= "" { 
                 set AttrValueCount(attr.%Id()) = $g(AttrValueCount(attr.%Id())) + 1
