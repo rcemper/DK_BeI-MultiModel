@@ -89,15 +89,16 @@ Method GetDynamicProduct() As %DynamicObject
     set result = {}
     set result.name = ..Name
     set result.category = ..Category.Name
+    set result."category_id" = ..Category.%Id()
     set result.id = ..%Id()
-    set result.bitstring = ##class(BeI.Utils).ShowBitstring(..BitString)
+    //set result.bitstring = ##class(BeI.Utils).ShowBitstring(..BitString)
     set result.price = ..Price
     set result.attributes = []
-    set attr = ..Attributes.GetNext(.key)
+    /*set attr = ..Attributes.GetNext(.key)
     while key '= "" {
         do result.attributes.%Push(attr.GetDynamicAttributeValue())
         set attr = ..Attributes.GetNext(.key)
-    }
+    }*/
     return result
 }
 

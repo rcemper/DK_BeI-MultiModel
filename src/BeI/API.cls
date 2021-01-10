@@ -6,9 +6,9 @@ Parameter CONTENTTYPE = "application/json";
 XData UrlMap
 {
 <Routes>
-    <Route Url="/filters" Method="GET" Call="Filters" Cors="false" />
-    <Route Url="/filters/:category" Method="GET" Call="Filters" Cors="false" />
-    <Route Url="/products" Method="POST" Call="Products" Cors="false" />
+    <Route Url="/filters" Method="GET" Call="Filters" Cors="true" />
+    <Route Url="/filters/:category" Method="GET" Call="Filters" Cors="true" />
+    <Route Url="/products" Method="POST" Call="Products" Cors="true" />
 </Routes>
 }
 
@@ -28,14 +28,17 @@ ClassMethod CategoryFilter() As %DynamicObject
 {
     set filter = {}
     set filter.name = "Categories"
+    set filter.id = -1
     set filter.options = []
     set categories = ##class(BeI.Category).GetAllCategories(),key=""
     set cat = categories.GetNext(.key)
     while key '= "" {
         set catFilter = {}
+        set catFilter.id = -1
         set catFilter.name = cat.Name
         set catFilter.value = cat.%Id()
-        set catFilter.bitPosition = cat.BitStringPosition
+        set catFilter."bit_position" = cat.BitStringPosition
+        set catFilter.checked = "false"
         do filter.options.%Push(catFilter)
         set cat = categories.GetNext(.key)
     }
@@ -57,14 +60,17 @@ ClassMethod AttributeFilters(filters As %DynamicArray, category As %Integer = ""
     while key '= "" {
         set filter = {}
         set filter.name = attr.Name
+        set filter.id = attr.%Id()
         set filter.options = []
         set values = attr.GetValues(),valKey = ""
         set val = values.GetNext(.valKey)
         while valKey '= "" {
             set option = {}
             set option.name = val.Name
+            set option.id = val.%Id()
             set option.value = val.Value
-            set option.bitPosition = val.BitStringPosition
+            set option."bit_position" = val.BitStringPosition
+            set option.checked = "false"
             do filter.options.%Push(option)
             set val = values.GetNext(.valKey)
         }
@@ -121,7 +127,7 @@ ClassMethod GetFilter() As %String [ PublicList = %request ]
             set optionsIter = filtervalue.options.%GetIterator()
             while optionsIter.%GetNext(.optionsKey,.optionsValue){
                 if optionsValue.checked = 0 {
-                    set $BIT(bitstring,optionsValue.bitPosition) = 0
+                    set $BIT(bitstring,optionsValue."bit_position") = 0
                 }
             }
         }
