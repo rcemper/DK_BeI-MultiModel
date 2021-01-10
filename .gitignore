@@ -66,6 +66,7 @@ Thumbs.db
 
 # production
 /build
+my-app/build/
 
 # misc
 .DS_Store
