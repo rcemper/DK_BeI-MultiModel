@@ -8,10 +8,10 @@ ClassMethod GetLastBitstringPosition() As %Numeric
 
 ClassMethod GetNextBitStringPosition() As %Numeric
 {
-    s next = 1
+    set next = 1
     lock +^BeILastBitstringPosition
-    s next= ##class(BeI.Agent).GetLastBitstringPosition()+1
-    s ^BeILastBitstringPosition=next
+    set next = ##class(BeI.Agent).GetLastBitstringPosition() + 1
+    set ^BeILastBitstringPosition = next
     lock -^BeILastBitstringPosition
     return next
 }
@@ -19,48 +19,48 @@ ClassMethod GetNextBitStringPosition() As %Numeric
 ClassMethod Run() As %Status
 {
     set ok = $$$OK
-    w *9,"Agent: Categories",!
-    s start=$zh
-    d ##class(BeI.Agent).AddCategories()
-    w *9,"Agent: Categories finished in: ",$zh-start,!
-    w *9,"Agent: Attribute values",!
-    s start=$zh
-    d ##class(BeI.Agent).AddAttributeValues()
-    w *9,"Agent: Attribute values finished in: ",$zh-start,!
-    w *9,"Agent: Products",!
-    s start=$zh
-    d ##class(BeI.Agent).AddProducts(.attrValueCount)
-    w *9,"Agent: Products finished in: ",$zh-start,!
-    w *9,"Agent: Counts",!
-    s start=$zh
-    d ##class(BeI.Agent).AddCountsToAttributeValues(.attrValueCount)
-    w *9,"Agent: Counts finished in: ",$zh-start,!
-    w *9,"Agent: Indices",!
-    s start=$zh
-    d ##class(BeI.Agent).BuildIndices()
-    w *9,"Agent: Indices finished in: ",$zh-start,!
+    write *9,"Agent: Categories",!
+    set start = $zh
+    do ##class(BeI.Agent).AddCategories()
+    write *9,"Agent: Categories finished in: ",$zh-start,!
+    write *9,"Agent: Attribute values",!
+    set start = $zh
+    do ##class(BeI.Agent).AddAttributeValues()
+    write *9,"Agent: Attribute values finished in: ",$zh-start,!
+    write *9,"Agent: Products",!
+    set start = $zh
+    do ##class(BeI.Agent).AddProducts(.attrValueCount)
+    write *9,"Agent: Products finished in: ",$zh-start,!
+    write *9,"Agent: Counts",!
+    set start = $zh
+    do ##class(BeI.Agent).AddCountsToAttributeValues(.attrValueCount)
+    write *9,"Agent: Counts finished in: ",$zh-start,!
+    write *9,"Agent: Indices",!
+    set start = $zh
+    do ##class(BeI.Agent).BuildIndices()
+    write *9,"Agent: Indices finished in: ",$zh-start,!
     return ok
 }
 
 ClassMethod AddCategories() As %Status
 {
     set ok = $$$OK
-    s cat=##class(BeI.Category).CategoriesWithoutPosition()
+    set cat = ##class(BeI.Category).CategoriesWithoutPosition()
     for i = 0:1:cat.Count()-1 {
-        s currentCat=cat.GetAt(i)
-        s currentCat.BitStringPosition=##class(BeI.Agent).GetNextBitStringPosition()
-        d currentCat.%Save(0)
+        set currentCat = cat.GetAt(i)
+        set currentCat.BitStringPosition = ##class(BeI.Agent).GetNextBitStringPosition()
+        do currentCat.%Save(0)
     }
     return ok
 }
 
 ClassMethod AddAttributeValues() As %Status
 {
-    s attrValues = ##class(BeI.AttributeValue).AttributeValuesWithoutPosition()
+    set attrValues = ##class(BeI.AttributeValue).AttributeValuesWithoutPosition()
     for i = 0:1:attrValues.Count()-1 {
-        s currentAttrVal=attrValues.GetAt(i)
-        s currentAttrVal.BitStringPosition=##class(BeI.Agent).GetNextBitStringPosition()
-        d currentAttrVal.%Save(0)
+        set currentAttrVal = attrValues.GetAt(i)
+        set currentAttrVal.BitStringPosition = ##class(BeI.Agent).GetNextBitStringPosition()
+        do currentAttrVal.%Save(0)
     }
     return $$$OK
 }
@@ -68,50 +68,56 @@ ClassMethod AddAttributeValues() As %Status
 ClassMethod AddProducts(ByRef AttrValueCount) As %Status
 {
     set ok = $$$OK
-    k AttrValueCount
-    s products = ##class(BeI.Product).GetAllProducts(),key=""
-    s prod = products.GetNext(.key)
-    while key'="" {
-        d prod.SetBitstring()
-        s attr = prod.Attributes.GetNext(.attrKey)
-        while attrKey'="" { 
-            s AttrValueCount(attr.%Id())=$g(AttrValueCount(attr.%Id()))+1
-            s attr = prod.Attributes.GetNext(.attrKey)
+    kill AttrValueCount
+    &SQL(DECLARE products CURSOR FOR SELECT id into:id FROM BeI.Product)
+    &SQL(OPEN products)
+    while 'SQLCODE {
+        &SQL(FETCH products)
+        i 'SQLCODE,id '= "" {
+            s prod = ##class(BeI.Product).%OpenId(id)
+            do prod.SetBitstring()
+            set attr = prod.Attributes.GetNext(.attrKey)
+            while attrKey '= "" { 
+                set AttrValueCount(attr.%Id()) = $g(AttrValueCount(attr.%Id())) + 1
+                set attr = prod.Attributes.GetNext(.attrKey)
+            }
         }
-        s prod = products.GetNext(.key)
     }
+    &SQL(CLOSE products)
     return ok
 }
 
 ClassMethod AddCountsToAttributeValues(ByRef AttrValueCount)
 {
-    s id=$o(AttrValueCount(""),1,value)
-    while id'="" {
-        s obj=##class(BeI.AttributeValue).%OpenId(id)
-        i obj {
-            s obj.ProductCount=value
-            d obj.%Save(0)
+    set id = $o(AttrValueCount(""),1,value)
+    while id '= "" {
+        set obj = ##class(BeI.AttributeValue).%OpenId(id)
+        if obj {
+            set obj.ProductCount = value
+            do obj.%Save(0)
         }
-        s id=$o(AttrValueCount(id),1,value)
+        set id = $o(AttrValueCount(id),1,value)
     }
 }
 
 ClassMethod BuildIndices() As %Status
 {
-  
-    s products = ##class(BeI.Product).GetAllProducts(),key=""
-    s prod = products.GetNext(.key)
-    while key'="" {
-        s idIndex=prod.%Id()
-        s priceIndex=($j(prod.Price,0,2)*10000000000)+prod.%Id()
-        s nameIndex = prod.Name_$EXTRACT(100000000+prod.%Id(),2,*)
+    &SQL(DECLARE prodlist CURSOR FOR SELECT id into:id FROM BeI.Product)
+    &SQL(OPEN prodlist)
+    while 'SQLCODE {
+        &SQL(FETCH prodlist)
+        if 'SQLCODE,id '="" {
+            set prod = ##class(BeI.Product).%OpenId(id)
+            set idIndex = prod.%Id()
+            set priceIndex = ($j(prod.Price,0,2) * 10000000000) + prod.%Id()
+            set nameIndex = prod.Name_$EXTRACT(100000000 + prod.%Id(),2,*)
         
-        s ^INDEX("SORTORDER","ID",idIndex)=prod.BitString
-        s ^INDEX("SORTORDER","PRICE",priceIndex)=prod.BitString
-        s ^INDEX("SORTORDER","NAME",nameIndex)=prod.BitString
-
-        s prod = products.GetNext(.key)
+            set ^INDEX("SORTORDER","ID",idIndex) = prod.BitString
+            set ^INDEX("SORTORDER","PRICE",priceIndex) = prod.BitString
+            set ^INDEX("SORTORDER","NAME",nameIndex) = prod.BitString
+        }
     }
+    &SQL(CLOSE prodlist)
     return $$$OK
 }
 
