@@ -8,9 +8,7 @@ XData UrlMap
 <Routes>
     <Route Url="/filters" Method="GET" Call="Filters" Cors="false" />
     <Route Url="/filters/:category" Method="GET" Call="Filters" Cors="false" />
-    <Route Url="/products/:sort/:pageSize/:lastId/:searchTerm" Method="POST" Call="Products" Cors="false" />
-    <Route Url="/products/:sort/:pageSize/:lastId" Method="POST" Call="Products" Cors="false" />    
-    <Route Url="/products/:sort/:pageSize" Method="POST" Call="Products" Cors="false" />
+    <Route Url="/products" Method="POST" Call="Products" Cors="false" />
 </Routes>
 }
 
@@ -76,24 +74,24 @@ ClassMethod AttributeFilters(filters As %DynamicArray, category As %Integer = ""
     return filters
 }
 
-ClassMethod Products(sort As %String, pageSize As %Integer, lastId As %String = "", searchTerm As %String = "") As %Status
+ClassMethod Products() As %Status
 {
     set start = $zh
     set result = {}
     set result.products = []
     set filter = ##class(BeI.API).GetFilter()
-    set result.filter = ##class(BeI.Utils).ShowBitstring(filter)
+    set result.filter = ##class(BeI.Utils).ShowBitstring(filter.bitstring)
     set count = 0,lastIndex = ""
-    set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(sort,"U"),lastId),1,value)
-    while count < pageSize,index '= "" {
-        if ##class(BeI.API).TestFilter(filter,value) {
+    set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort,"U"),filter.lastId),1,value)
+    while count < filter.pageSize,index '= "" {
+        if ##class(BeI.API).TestFilter(filter.bitstring,value) {
             set oProd=##class(BeI.API).GetProductFromIndex(index)
-            if oProd,(oProd.Name [ searchTerm) || (searchTerm = "") {
+            if oProd,(oProd.Name [ filter.searchTerm) || (filter.searchTerm = "") {
                 do result.products.%Push(oProd.GetDynamicProduct())
                 set count = count + 1,lastIndex = index
             }
         }
-        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(sort,"U"),index),1,value)
+        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort,"U"),index),1,value)
     }
     set result.lastId = lastIndex
     set result.time = $zh - start
@@ -103,23 +101,32 @@ ClassMethod Products(sort As %String, pageSize As %Integer, lastId As %String = 
 
 ClassMethod GetFilter() As %String [ PublicList = %request ]
 {
-    set filter = ""
+    set filter = {},bitstring = ""
+    set filter.searchTerm = ""
+    set filter.pageSize = 5
+    set filter.lastId = ""
+    set filter.sort = "id" 
     set len = ##class(BeI.Agent).GetLastBitstringPosition()
     for i = 1:1:len {
-        set $BIT(filter, i) = 1
+        set $BIT(bitstring, i) = 1
     }
     if %request.Content {
         set filterObj = {}.%FromJSON(%request.Content)
+        if filterObj.searchTerm { set filter.searchTerm = filterObj.searchTerm }
+        if filterObj.pageSize { set filter.pageSize = filterObj.pageSize }
+        if filterObj.lastId { set filter.lastId = filterObj.lastId }
+        if filterObj.sort { set filter.sort = filterObj.sort }
         set filterIter = filterObj.filters.%GetIterator()
         while filterIter.%GetNext(.key,.filtervalue) {
             set optionsIter = filtervalue.options.%GetIterator()
             while optionsIter.%GetNext(.optionsKey,.optionsValue){
                 if optionsValue.checked = 0 {
-                    set $BIT(filter,optionsValue.bitPosition) = 0
+                    set $BIT(bitstring,optionsValue.bitPosition) = 0
                 }
             }
         }
     }
+    set filter.bitstring = bitstring
     return filter
 }
 
