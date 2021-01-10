@@ -1,0 +1,141 @@
+cat-1-TV
+cat-2-Laptop
+cat-3-Tablet
+
+attr-1-Screen Size
+attr-2-Energy Class
+attr-3-CPU
+attr-4-OS
+attr-5-Resolution
+attr-6-Keyboardlayout
+attr-7-VideoChip
+attr-8-Screen Formfactor
+attr-9-Pannel Type
+attr-10-Backlight
+attr-11-Memory
+attr-12-storrage
+attr-13-Brand
+
+lnk-1-1
+lnk-1-2
+lnk-2-1
+lnk-2-2
+lnk-2-3
+lnk-3-1
+lnk-3-2
+lnk-3-3
+lnk-2-4
+lnk-3-4
+lnk-2-6
+lnk-2-7
+lnk-1-8
+lnk-1-9
+lnk-1-10
+lnk-3-5
+lnk-2-11
+lnk-3-11
+lnk-2-12
+lnk-3-12
+lnk-1-13
+lnk-2-13
+lnk-3-13
+
+attrval-1-10.1-1
+attrval-1-12.3-2
+attrval-1-13.3-3
+attrval-1-14-4
+attrval-1-15.6-5
+attrval-1-17.3-6
+attrval-1-42-7
+attrval-1-57.5-8
+attrval-1-65-9
+attrval-1-82-10
+attrval-1-98-11
+attrval-1-5-12
+attrval-1-8.1-13
+attrval-1-10.8-14
+attrval-1-12-15
+attrval-1-16-16
+attrval-2-A+++-1
+attrval-2-A++-2
+attrval-2-A+-3
+attrval-2-A-4
+attrval-2-B-5
+attrval-2-C-6
+attrval-2-D-7
+attrval-2-E-8
+attrval-2-F-9
+attrval-3-AMD Ryzen 5-1
+attrval-3-AMD Ryzen 7-2
+attrval-3-Intel Core i3-3
+attrval-3-Intel Core i5-4
+attrval-3-Intel Core i7-5
+attrval-3-Intel Core i9-6
+attrval-3-Qualcomm Snapdragon 662-7
+attrval-3-Qualcomm Snapdragon 865-8
+attrval-3-MediaTek Helio P22T-9
+attrval-3-Apple A12 Bionic-10
+attrval-3-Apple A12Z Bionic-12
+attrval-3-Apple A14 Bionic-13
+attrval-4-Chrome OS-1
+attrval-4-macOS 10.15-2
+attrval-4-macOS BigSur-3
+attrval-4-Windows 7-4
+attrval-4-Windows 10-5
+attrval-4-Google Android 9.0-6
+attrval-4-Google Android 10.0-7
+attrval-4-iOS 12-8
+attrval-4-IPadOS-9
+attrval-4-Windows 8-10
+attrval-4-Windows 8.1-11
+attrval-5-1920x1200-1
+attrval-5-2000x1200-2
+attrval-5-2160x1620-3
+attrval-5-2360x1640-4
+attrval-5-2560x1600-5
+attrval-5-2732x2048-6
+attrval-5-1366x768-7
+attrval-5-1600x900-8
+attrval-5-1920x180-9
+attrval-5-2256x1504-10
+attrval-5-3840x2160-11
+attrval-6-Azerty-1
+attrval-6-Qwerty-2
+attrval-6-Qwertz-3
+attrval-7-GeForce GTX1070-1
+attrval-7-Intel HD Graphics-2
+attrval-7-Intel HD Graphics 630-3
+attrval-7-GeForce GTX1650-4
+attrval-7-Apple M1 7-core-5
+attrval-7-Apple M1 8-core-6
+attrval-7-Intel UHD Graphics-7
+attrval-7-Radeon RX vega 6-8
+attrval-7-Radeon RX vega 8-9
+attrval-8-Flat-1
+attrval-8-Curved-2
+attrval-9-LCD-1
+attrval-9-OLED-2
+attrval-9-Plasma-3
+attrval-10-CCFL-1
+attrval-10-Direct-Led-2
+attrval-10-Edge-lit-3
+attrval-11-1GB-1
+attrval-11-2GB-2
+attrval-11-6GB-3
+attrval-11-8GB-4
+attrval-11-12GB-6
+attrval-11-16GB-7
+attrval-11-32GB-8
+attrval-11-64GB-9
+attrval-12-1GB-1
+attrval-12-4GB-2
+attrval-12-16GB-3
+attrval-12-32GB-4
+attrval-12-128GB-5
+attrval-12-256GB-6
+attrval-12-500GB-7
+attrval-12-1TB-8
+attrval-13-Microsoft-1
+attrval-13-Apple-2
+attrval-13-Samsumg-3
+attrval-13-Huawei-4

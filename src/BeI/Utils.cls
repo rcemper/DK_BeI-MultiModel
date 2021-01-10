@@ -23,134 +23,11 @@ ClassMethod BuildFirstTestSet(size As %Integer = 100) As %Status
         set start = $zh
         do ##class(BeI.Utils).ResetDB()
         write "DB reset done in: ",$zh-start,!
-        write "Populating categories",!
+        write "Populating categories - Attributes - attributevalues",!
         set start = $zh
-        // populate categories
-        set catTV = ##class(BeI.Utils).NewCategory("TV") 
-        set catLaptop = ##class(BeI.Utils).NewCategory("Laptop") 
-        set catTablet = ##class(BeI.Utils).NewCategory("Tablet") 
-        write "Categories populated in: ",$zh-start,!
-        write "Populating Attributes",!
-        set start = $zh
-        // populate attributes
-        set attrEnergyClass = ##class(BeI.Utils).NewAttribute("Energy class")
-        set attrScreensize = ##class(BeI.Utils).NewAttribute("Screen size")
-        set attrCPU = ##class(BeI.Utils).NewAttribute("CPU")
-        write "Attributes populated in: ",$zh-start,!
-        write "Adding Attributes to categories",!
-        set start = $zh
-        // add attributes to categories 
-        do catTV.Attributes.SetAt(attrEnergyClass,0)
-        do catTV.Attributes.SetAt(attrScreensize,1)
-        do catTV.%Save()
-        do catLaptop.Attributes.SetAt(attrEnergyClass,0)
-        do catLaptop.Attributes.SetAt(attrScreensize,1)
-        do catLaptop.Attributes.SetAt(attrCPU,2)
-        do catLaptop.%Save()        
-        do catTablet.Attributes.SetAt(attrEnergyClass,0)
-        do catTablet.Attributes.SetAt(attrScreensize,1)
-        do catTablet.Attributes.SetAt(attrCPU,2)
-        do catTablet.%Save()
-        write "Attributes linked to categories in: ",$zh-start,!
-        write "Populating attribute values",!
-        set start = $zh
-        // Populate attribute values
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrEnergyClass
-        set x.Name = "A++"
-        set x.Value = 1
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrEnergyClass
-        set x.Name = "A+"
-        set x.Value = 2
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrEnergyClass
-        set x.Name = "A"
-        set x.Value = 3
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrEnergyClass
-        set x.Name = "B"
-        set x.Value = 4
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrScreensize
-        set x.Name = "8 inch"
-        set x.Value = 1
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrScreensize
-        set x.Name = "10 inch"
-        set x.Value = 2
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrScreensize
-        set x.Name = "12 inch"
-        set x.Value = 3
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrScreensize
-        set x.Name = "14 inch"
-        set x.Value = 4
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrScreensize
-        set x.Name = "15 inch"
-        set x.Value = 5
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrScreensize
-        set x.Name = "17 inch"
-        set x.Value = 6
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrScreensize
-        set x.Name = "28 inch"
-        set x.Value = 7
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrScreensize
-        set x.Name = "32 inch"
-        set x.Value = 8
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrScreensize
-        set x.Name = "34 inch"
-        set x.Value = 9
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrScreensize
-        set x.Name = "55 inch"
-        set x.Value = 10
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrCPU
-        set x.Name = "Intel I3"
-        set x.Value = 1
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrCPU
-        set x.Name = "Intel I5"
-        set x.Value = 2
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrCPU
-        set x.Name = "Intel I7"
-        set x.Value = 3
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrCPU
-        set x.Name = "AMD Ryzen"
-        set x.Value = 4
-        do x.%Save()
-        set x = ##class(BeI.AttributeValue).%New()
-        set x.Attribute = attrCPU
-        set x.Name = "Snapdragon"
-        set x.Value = 5
-        do x.%Save()
-        write "Attribute values populated in: ",$zh-start,!
+        // populate categories - Attributes - attributevalues
+        do ##class(BeI.Utils).PopulateFromFile()
+        write "categories - Attributes - attributevalues populated in: ",$zh-start,!
         write "Populating products",!
         set start = $zh
         // populate products
@@ -170,6 +47,35 @@ ClassMethod BuildFirstTestSet(size As %Integer = 100) As %Status
         write "Agent ran for: ",$zh-start,!
         // return overal status
         return ok
+}
+
+ClassMethod PopulateFromFile(filename As %String = "/shared/testData.txt") As %Status
+{
+    Set stream=##class(%Stream.FileCharacter).%New()
+    Set sc=stream.LinkToFile(filename)
+    While 'stream.AtEnd {
+        set line = stream.ReadLine()
+        set line = $tr(line,$c(13),"")
+        if line '= "" {
+            set content=$LISTFROMSTRING(line,"-")
+            set type=$LIST(content,1)
+            if type = "cat" {
+                set cat($LIST(content,2)) = ##class(BeI.Utils).NewCategory($LIST(content,3))
+            } elseif type = "attr" {
+                set attr($LIST(content,2)) = ##class(BeI.Utils).NewAttribute($LIST(content,3))
+            } elseif type = "lnk" {
+                do cat($LIST(content,2)).Attributes.SetAt(attr($LIST(content,3)),cat($LIST(content,2)).Attributes.Count())
+                do cat($LIST(content,2)).%Save()
+            } elseif type = "attrval" {
+                set x = ##class(BeI.AttributeValue).%New()
+                set x.Attribute = attr($LIST(content,2))
+                set x.Name = $LIST(content,3)
+                set x.Value = $LIST(content,4)
+                do x.%Save()
+            }
+        }
+    }    
+    return $$$OK
 }
 
 ClassMethod NewCategory(Name As %String) As BeI.Category
