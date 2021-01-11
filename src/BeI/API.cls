@@ -94,7 +94,7 @@ ClassMethod Products() As %Status
     while count < filter.pageSize,index '= "" {
         if ##class(BeI.API).TestFilter(filter.bitstring,value) {
             set oProd=##class(BeI.API).GetProductFromIndex(index)
-            if oProd,(oProd.Name [ filter.searchTerm) || (filter.searchTerm = "") {
+            if oProd,($ZCONVERT(oProd.Name,"U") [ $ZCONVERT(filter.searchTerm,"U")) || (filter.searchTerm = "") {
                 do result.products.%Push(oProd.GetDynamicProduct())
                 set count = count + 1,lastIndex = index
             }
@@ -120,10 +120,10 @@ ClassMethod GetFilter() As %String [ PublicList = %request ]
     }
     if %request.Content {
         set filterObj = {}.%FromJSON(%request.Content)
-        if filterObj.searchTerm { set filter.searchTerm = filterObj.searchTerm }
-        if filterObj.pageSize { set filter.pageSize = filterObj.pageSize }
-        if filterObj.lastId { set filter.lastId = filterObj.lastId }
-        if filterObj.sort { set filter.sort = filterObj.sort }
+        if filterObj.searchTerm '= "" { set filter.searchTerm = filterObj.searchTerm }
+        if filterObj.pageSize '= "" { set filter.pageSize = filterObj.pageSize }
+        if filterObj.lastId '= "" { set filter.lastId = filterObj.lastId }
+        if filterObj.sort '= "" { set filter.sort = filterObj.sort }
         set filterIter = filterObj.filters.%GetIterator()
         while filterIter.%GetNext(.key,.filtervalue) {
             set optionsIter = filtervalue.options.%GetIterator()
