@@ -7,6 +7,7 @@ XData UrlMap
 {
 <Routes>
     <Route Url="/filters" Method="GET" Call="Filters" Cors="true" />
+    <Route Url="/sorts" Method="GET" Call="Sorts" Cors="true" />
     <Route Url="/filters/:category" Method="GET" Call="Filters" Cors="true" />
     <Route Url="/products" Method="POST" Call="Products" Cors="true" />
 </Routes>
@@ -21,6 +22,43 @@ ClassMethod Filters(category As %Integer = "") As %Status
     set resultObj.filters = ##class(BeI.API).AttributeFilters(resultObj.filters,category)
     set resultObj.time = $ZH - start
     write resultObj.%ToJSON()
+    return $$$OK
+}
+
+ClassMethod Sorts() As %Status
+{
+    set sorts = []
+    set sortPriceAsc = {}
+    set sortPriceAsc.name = "Price A->Z"
+    set sortPriceAsc.direction = 1
+    set sortPriceAsc.field = "price"
+    do sorts.%Push(sortPriceAsc)
+    set sortPriceDesc = {}
+    set sortPriceDesc.name = "Price Z->A"
+    set sortPriceDesc.direction = -1
+    set sortPriceDesc.field = "price"
+    do sorts.%Push(sortPriceDesc)
+    set sortNameAsc = {}
+    set sortNameAsc.name = "Name A->Z"
+    set sortNameAsc.direction = 1
+    set sortNameAsc.field = "name"
+    do sorts.%Push(sortNameAsc)    
+    set sortNameDesc = {}
+    set sortNameDesc.name = "Name Z->A"
+    set sortNameDesc.direction = -1
+    set sortNameDesc.field = "name"
+    do sorts.%Push(sortNameDesc)    
+    set sortIdAsc = {}
+    set sortIdAsc.name = "Id A->Z"
+    set sortIdAsc.direction = 1
+    set sortIdAsc.field = "id"
+    do sorts.%Push(sortIdAsc)    
+    set sortIdDesc = {}
+    set sortIdDesc.name = "Id Z->A"
+    set sortIdDesc.direction = -1
+    set sortIdDesc.field = "id"
+    do sorts.%Push(sortIdDesc)
+    w sorts.%ToJSON()
     return $$$OK
 }
 
