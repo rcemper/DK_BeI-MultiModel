@@ -128,7 +128,7 @@ ClassMethod Products() As %Status
     set filter = ##class(BeI.API).GetFilter()
     set result.filter = ##class(BeI.Utils).ShowBitstring(filter.bitstring)
     set count = 0,lastIndex = ""
-    set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort,"U"),filter.lastId),1,value)
+    set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),filter.lastId),filter.sort.direction,value)
     while count < filter.pageSize,index '= "" {
         if ##class(BeI.API).TestFilter(filter.bitstring,value) {
             set oProd=##class(BeI.API).GetProductFromIndex(index)
@@ -137,7 +137,7 @@ ClassMethod Products() As %Status
                 set count = count + 1,lastIndex = index
             }
         }
-        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort,"U"),index),1,value)
+        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),index),filter.sort.direction,value)
     }
     set result.lastId = lastIndex
     set result.time = $zh - start
