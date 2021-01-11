@@ -14,8 +14,11 @@ function App() {
     /*
     const newProducts: IProduct[] = products.filter((product) =>
               doesProductNameContain(product,searchTerm))
-    updateState({...state, products:newProducts, searchTerm:searchTerm});
     */
+    const newSearchTerm=searchTerm;
+    console.log(newSearchTerm);
+    updateState({...state, searchTerm:newSearchTerm});
+    console.log(state.searchTerm);
     updateProducts();
   }
 
@@ -23,6 +26,7 @@ function App() {
     const newFilters: IFilter[]= state.filters;
     changeFilterOptionChecked(newFilters,name,checked);
     updateState({...state, filters:newFilters});
+    updateProducts();
   }
 
   function updateProducts() {
@@ -50,7 +54,6 @@ function App() {
     ).then(res => res.json())
     .then(
       (result) => {
-        console.log("here come the products");
         console.log(result);
         updateState({...state,products: result.products})
       },
