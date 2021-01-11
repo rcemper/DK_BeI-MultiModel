@@ -3,17 +3,20 @@ import './App.css';
 import { Header } from "./components/Header";
 import { Product } from "./components/Product";
 import { Filter } from "./components/Filter";
-import {products, filters} from "./mocks";
+//import {products, filters} from "./mocks";
 import { IFilter, IProduct } from './types';
-import {doesProductNameContain,changeFilterOptionChecked} from "./utils";
+import {/*doesProductNameContain,*/changeFilterOptionChecked} from "./utils";
 import { Helmet } from 'react-helmet-async';
 
 function App() {
-  const [state,updateState] = useState({products:products, searchTerm:"", filters: filters});
+  const [state,updateState] = useState({products:Array<IProduct>(), searchTerm:"", filters: Array<IFilter>()});
   function onSearch(searchTerm : string) {
+    /*
     const newProducts: IProduct[] = products.filter((product) =>
               doesProductNameContain(product,searchTerm))
     updateState({...state, products:newProducts, searchTerm:searchTerm});
+    */
+    updateProducts();
   }
 
   function filterCallBack(name:string, checked: boolean) {
@@ -49,6 +52,7 @@ function App() {
       (result) => {
         console.log("here come the products");
         console.log(result);
+        updateState({...state,products: result.products})
       },
       // Note: it's important to handle errors here
       // instead of a catch() block so that we don't swallow
@@ -68,7 +72,6 @@ function App() {
         console.log(result.filters);
         updateState(prevState => {
           return {...prevState, filters: result.filters}});
-        updateProducts();
       },
       // Note: it's important to handle errors here
       // instead of a catch() block so that we don't swallow
