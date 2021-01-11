@@ -12,7 +12,7 @@ export function FilterOption({ filteroption,filterCallBack }: IFilterOptionProps
             type="checkbox" 
             name={filteroption.id.toString()} 
             value=""
-            defaultChecked={filteroption.checked}
+            checked={filteroption.checked}
             onChange={(event:ChangeEvent<HTMLInputElement>) => filterCallBack(event.target.name,event.target.checked)} />
             {filteroption.name}
         </label>

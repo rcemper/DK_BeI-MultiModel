@@ -32,13 +32,15 @@ ClassMethod CategoryFilter() As %DynamicObject
     set filter.options = []
     set categories = ##class(BeI.Category).GetAllCategories(),key=""
     set cat = categories.GetNext(.key)
+    set i=0
     while key '= "" {
+        set i=i+1
         set catFilter = {}
-        set catFilter.id = -1
+        set catFilter.id = -1*i
         set catFilter.name = cat.Name
         set catFilter.value = cat.%Id()
         set catFilter."bit_position" = cat.BitStringPosition
-        set catFilter.checked = "false"
+        d catFilter.%Set("checked",1,"boolean")
         do filter.options.%Push(catFilter)
         set cat = categories.GetNext(.key)
     }
@@ -70,7 +72,7 @@ ClassMethod AttributeFilters(filters As %DynamicArray, category As %Integer = ""
             set option.id = val.%Id()
             set option.value = val.Value
             set option."bit_position" = val.BitStringPosition
-            set option.checked = "false"
+            d option.%Set("checked",0,"boolean")
             do filter.options.%Push(option)
             set val = values.GetNext(.valKey)
         }

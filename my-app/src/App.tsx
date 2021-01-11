@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Header } from "./components/Header";
 import { Product } from "./components/Product";
@@ -20,8 +20,27 @@ function App() {
     const newFilters: IFilter[]= state.filters;
     changeFilterOptionChecked(newFilters,name,checked);
     updateState({...state, filters:newFilters});
-    console.log(newFilters);
   }
+
+  useEffect(() => {
+    // code to run on component mount
+    fetch("http://localhost:9092/BeI/filters/1")
+    .then(res => res.json())
+    .then(
+      (result) => {
+        console.log(result.filters);
+        updateState(prevState => {
+          return {...prevState, filters: result.filters}});
+      },
+      // Note: it's important to handle errors here
+      // instead of a catch() block so that we don't swallow
+      // exceptions from actual bugs in components.
+      (error) => {
+  
+      }
+    );
+  }, [])
+
 return (
 <div className="App">
   <Helmet>
