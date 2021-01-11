@@ -9,27 +9,32 @@ import {/*doesProductNameContain,*/changeFilterOptionChecked} from "./utils";
 import { Helmet } from 'react-helmet-async';
 
 function App() {
-  const [state,updateState] = useState({products:Array<IProduct>(), searchTerm:"", filters: Array<IFilter>()});
+  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>()});
+  const [productState,updateProductState] = useState({products: Array<IProduct>()});
   function onSearch(searchTerm : string) {
     /*
     const newProducts: IProduct[] = products.filter((product) =>
               doesProductNameContain(product,searchTerm))
     */
     const newSearchTerm=searchTerm;
-    console.log(newSearchTerm);
-    updateState({...state, searchTerm:newSearchTerm});
+    updateState(prevState => {
+      return {...prevState, searchTerm: newSearchTerm}});
     console.log(state.searchTerm);
-    updateProducts();
+    //updateProducts();
   }
 
   function filterCallBack(name:string, checked: boolean) {
     const newFilters: IFilter[]= state.filters;
+    //console.log(newFilters)
     changeFilterOptionChecked(newFilters,name,checked);
-    updateState({...state, filters:newFilters});
-    updateProducts();
+    //console.log(state.filters);
+    updateState(prevState => {
+      return {...prevState, filters: newFilters}});
+    //console.log(state.filters);
+    //updateProducts();
   }
 
-  function updateProducts() {
+  useEffect(() => {
     let payload = {
       "filters":state.filters,
       "sort": "price",
@@ -55,7 +60,7 @@ function App() {
     .then(
       (result) => {
         console.log(result);
-        updateState({...state,products: result.products})
+        updateProductState({...state,products: result.products})
       },
       // Note: it's important to handle errors here
       // instead of a catch() block so that we don't swallow
@@ -64,7 +69,7 @@ function App() {
   
       }
     );
-  }
+  }, [state])
 
   useEffect(() => {
     // code to run on component mount
@@ -110,7 +115,7 @@ return (
       </div>
       <div className="col-sm-9 border">
         <div className="row row-cols-3 px-4">
-          {state.products.map(
+          {productState.products.map(
             (product) => (
               <Product key={product.id} product={product} />
             )
