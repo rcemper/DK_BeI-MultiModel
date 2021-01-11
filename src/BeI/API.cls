@@ -127,9 +127,18 @@ ClassMethod GetFilter() As %String [ PublicList = %request ]
         set filterIter = filterObj.filters.%GetIterator()
         while filterIter.%GetNext(.key,.filtervalue) {
             set optionsIter = filtervalue.options.%GetIterator()
-            while optionsIter.%GetNext(.optionsKey,.optionsValue){
-                if optionsValue.checked = 0 {
-                    set $BIT(bitstring,optionsValue."bit_position") = 0
+            s foundOne=0
+            while foundOne && optionsIter.%GetNext(.optionsKey,.optionsValue){
+                if optionsValue.checked {
+                    s foundOne=1
+                }
+            }
+            if foundOne {
+                set optionsIter = filtervalue.options.%GetIterator()
+                while optionsIter.%GetNext(.optionsKey,.optionsValue){
+                    if optionsValue.checked = 0 {
+                        set $BIT(bitstring,optionsValue."bit_position") = 0
+                    }
                 }
             }
         }
@@ -144,7 +153,7 @@ ClassMethod TestFilter(filter As %String, value As %String, debug = 0) As %Boole
     ;i debug { w ##class(BeI.Utils).ShowBitstring(value),!,##class(BeI.Utils).ShowBitstring(filter),! }
     set test = $bitlogic(filter&value)
     ;i debug { w ##class(BeI.Utils).ShowBitstring(test),! }
-    set match = '$BITCOUNT($bitlogic(filter^value),1)
+    set match = '$BITCOUNT($bitlogic(test^value),1)
     return match
 }
 

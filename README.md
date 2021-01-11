@@ -36,3 +36,9 @@ To set up the API, some steps need to be taken:
    * Click the "Save" Button
 
 
+## running the app
+
+in the my-app directory
+
+      npm install 
+      npm start
