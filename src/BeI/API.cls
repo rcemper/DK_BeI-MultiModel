@@ -128,7 +128,7 @@ ClassMethod GetFilter() As %String [ PublicList = %request ]
         while filterIter.%GetNext(.key,.filtervalue) {
             set optionsIter = filtervalue.options.%GetIterator()
             s foundOne=0
-            while foundOne && optionsIter.%GetNext(.optionsKey,.optionsValue){
+            while 'foundOne && optionsIter.%GetNext(.optionsKey,.optionsValue){
                 if optionsValue.checked {
                     s foundOne=1
                 }
