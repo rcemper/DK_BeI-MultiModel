@@ -144,7 +144,7 @@ ClassMethod TestFilter(filter As %String, value As %String, debug = 0) As %Boole
     ;i debug { w ##class(BeI.Utils).ShowBitstring(value),!,##class(BeI.Utils).ShowBitstring(filter),! }
     set test = $bitlogic(filter&value)
     ;i debug { w ##class(BeI.Utils).ShowBitstring(test),! }
-    set match = (value = test)
+    set match = $BITCOUNT($bitlogic(filter^value))
     return match
 }
 
