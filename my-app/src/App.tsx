@@ -18,8 +18,44 @@ function App() {
 
   function filterCallBack(name:string, checked: boolean) {
     const newFilters: IFilter[]= state.filters;
+    console.log("changing: "+name+" to: "+checked);
     changeFilterOptionChecked(newFilters,name,checked);
     updateState({...state, filters:newFilters});
+  }
+
+  function updateProducts() {
+    let payload = {
+      "filters":state.filters,
+      "sort": "price",
+      "pageSize": 10,
+      "lastId": 0
+    };
+
+    fetch("http://localhost:9092/BeI/products", {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, *cors, same-origin
+      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: 'same-origin', // include, *same-origin, omit
+      headers: {
+        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      redirect: 'follow', 
+      referrerPolicy: 'no-referrer',
+      body: JSON.stringify(payload)}
+    ).then(res => res.json())
+    .then(
+      (result) => {
+        console.log("here come the products");
+        console.log(result);
+      },
+      // Note: it's important to handle errors here
+      // instead of a catch() block so that we don't swallow
+      // exceptions from actual bugs in components.
+      (error) => {
+  
+      }
+    );
   }
 
   useEffect(() => {
@@ -31,6 +67,7 @@ function App() {
         console.log(result.filters);
         updateState(prevState => {
           return {...prevState, filters: result.filters}});
+        updateProducts();
       },
       // Note: it's important to handle errors here
       // instead of a catch() block so that we don't swallow
