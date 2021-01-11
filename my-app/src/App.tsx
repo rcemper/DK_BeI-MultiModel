@@ -18,7 +18,6 @@ function App() {
 
   function filterCallBack(name:string, checked: boolean) {
     const newFilters: IFilter[]= state.filters;
-    console.log("changing: "+name+" to: "+checked);
     changeFilterOptionChecked(newFilters,name,checked);
     updateState({...state, filters:newFilters});
   }
@@ -28,8 +27,10 @@ function App() {
       "filters":state.filters,
       "sort": "price",
       "pageSize": 10,
-      "lastId": 0
+      "lastId": 0,
+      "searchTerm": state.searchTerm
     };
+    console.log(payload);
 
     fetch("http://localhost:9092/BeI/products", {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
