@@ -1,0 +1,38 @@
+{
+  "name": "bei-multimodel",
+  "version": "1.0.0",
+  "description": "To initialize the data to a small test set use ``` d ##class(BeI.Utils).BuildFirstTestSet(100) ``` This will delete all entries in the database and repopulate the database.",
+  "main": "index.js",
+  "dependencies": {
+    "npm-watch": "^0.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch_iris": "npm-watch iris_cls",
+    "iris_cls": "echo \"run iris import\" ",
+    "watch": "npm-watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivove/BeI-MultiModel.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ivove/BeI-MultiModel/issues"
+  },
+  "watch": {
+    "iris_cls": {
+      "extensions": "cls",
+      "quiet": false,
+      "legacyWatch": true,
+      "delay": 2500,
+      "patterns": [
+        "src",
+        "Bel"
+      ] 
+    }
+  },
+  "homepage": "https://github.com/ivove/BeI-MultiModel#readme"
+}
