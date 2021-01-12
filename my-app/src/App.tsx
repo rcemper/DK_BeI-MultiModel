@@ -3,14 +3,16 @@ import './App.css';
 import { Header } from "./components/Header";
 import { Product } from "./components/Product";
 import { Filter } from "./components/Filter";
+import { SortOrder } from "./components/SortOrder";
 //import {products, filters} from "./mocks";
-import { IFilter, IProduct } from './types';
-import {/*doesProductNameContain,*/changeFilterOptionChecked} from "./utils";
+import { IFilter, IProduct, ISortOrder } from './types';
+import {/*doesProductNameContain,*/changeFilterOptionChecked,fetchAPI} from "./utils";
 import { Helmet } from 'react-helmet-async';
 
 function App() {
-  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>()});
+  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1} });
   const [productState,updateProductState] = useState({products: Array<IProduct>()});
+  const [sortOrders,updateSortOrders] = useState({sortOrders: Array<ISortOrder>()});
   function onSearch(searchTerm : string) {
     /*
     const newProducts: IProduct[] = products.filter((product) =>
@@ -19,75 +21,86 @@ function App() {
     const newSearchTerm=searchTerm;
     updateState(prevState => {
       return {...prevState, searchTerm: newSearchTerm}});
-    console.log(state.searchTerm);
-    //updateProducts();
   }
 
   function filterCallBack(name:string, checked: boolean) {
     const newFilters: IFilter[]= state.filters;
-    //console.log(newFilters)
     changeFilterOptionChecked(newFilters,name,checked);
-    //console.log(state.filters);
     updateState(prevState => {
       return {...prevState, filters: newFilters}});
-    //console.log(state.filters);
-    //updateProducts();
+  }
+
+  function sortOrderCallBack(id:string) {
+    updateState(prevState => {
+      return {...prevState, selectedSortOrder:
+        {
+          field:id.split("_")[0],
+          direction:+id.split("_")[1]
+        }
+      }
+    });
   }
 
   useEffect(() => {
-    let payload = {
-      "filters":state.filters,
-      "sort": "price",
-      "pageSize": 10,
-      "lastId": 0,
-      "searchTerm": state.searchTerm
-    };
-    console.log(payload);
+    if (state.filters.length && state.selectedSortOrder.field!=="") { 
+      console.log("state changed");
+      let payload = {
+        "filters":state.filters,
+        "sort": state.selectedSortOrder,
+        "pageSize": 10,
+        "lastId": 0,
+        "searchTerm": state.searchTerm
+      };
+      console.log(payload);
 
-    fetch("http://localhost:9092/BeI/products", {
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
-      headers: {
-        'Content-Type': 'application/json'
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: 'follow', 
-      referrerPolicy: 'no-referrer',
-      body: JSON.stringify(payload)}
-    ).then(res => res.json())
-    .then(
-      (result) => {
-        console.log(result);
-        updateProductState({...state,products: result.products})
-      },
-      // Note: it's important to handle errors here
-      // instead of a catch() block so that we don't swallow
-      // exceptions from actual bugs in components.
-      (error) => {
-  
-      }
-    );
+      fetch("http://localhost:9092/BeI/products", {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+          'Content-Type': 'application/json'
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: 'follow', 
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(payload)}
+      ).then(res => res.json())
+      .then(
+        (result) => {
+          console.log(result);
+          updateProductState({...state,products: result.products})
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+    
+        }
+      );
+    }
   }, [state])
 
   useEffect(() => {
     // code to run on component mount
-    fetch("http://localhost:9092/BeI/filters/1")
-    .then(res => res.json())
-    .then(
-      (result) => {
-        console.log(result.filters);
-        updateState(prevState => {
-          return {...prevState, filters: result.filters}});
-      },
-      // Note: it's important to handle errors here
-      // instead of a catch() block so that we don't swallow
-      // exceptions from actual bugs in components.
-      (error) => {
-  
-      }
-    );
+    console.log("requesting startup data: ");
+    let newFilters: IFilter[]=Array<IFilter>();
+    let newSortOrders: ISortOrder[]=Array<ISortOrder>();
+    const fetchFilters = async() => {
+      const filterResult=await fetchAPI("http://localhost:9092/BeI/filters/1",{});
+      newFilters=filterResult.filters;
+      const sortOrderResult = await fetchAPI("http://localhost:9092/BeI/sorts",{});
+      newSortOrders=sortOrderResult
+
+      console.log("Startup data received: ");
+      updateSortOrders(prevState => {
+        return {...prevState, sortOrders:newSortOrders}});
+      updateState(prevState => {
+        return {...prevState, filters: newFilters, selectedSortOrder: newSortOrders[0] }});
+
+    };
+
+    fetchFilters();
   }, [])
 
 return (
@@ -106,20 +119,24 @@ return (
   <Header searchCallback={onSearch}/>
   <div className="container--xxl .mt-2 px-4">
     <div className="row">
-      <div className="col-sm-3 border px-4">
+      <div className="col-sm-3 px-4">
         {state.filters.map(
             (filter) => (
               <Filter key={filter.id} filter={filter} filterCallBack={filterCallBack} />
             )
           )}        
       </div>
-      <div className="col-sm-9 border">
+      <div className="col-sm-9">
+        <div>
+          <SortOrder key="1" sortOrders={sortOrders.sortOrders} sortOrderCallBack={sortOrderCallBack} />
+        </div>
         <div className="row row-cols-3 px-4">
-          {productState.products.map(
+          {productState.products ? productState.products.map(
             (product) => (
               <Product key={product.id} product={product} />
             )
-          )}
+          ) : <div>No products</div>
+        }
         </div>
       </div>
     </div>
