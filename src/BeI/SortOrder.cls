@@ -7,6 +7,9 @@ Property Direction As %Numeric;
 
 Property Field As %String;
 
+/// the rule to build the index; assuming you have a variable prod holding a BeI.Product (this will be called indirect)
+Property IndexRule As %String;
+
 Method GetDynamicSortOrder() As %DynamicObject
 {
     set result = {}
@@ -59,6 +62,9 @@ Storage Default
 </Value>
 <Value name="4">
 <Value>Field</Value>
+</Value>
+<Value name="5">
+<Value>IndexRule</Value>
 </Value>
 </Data>
 <DataLocation>^BeI.SortOrderD</DataLocation>

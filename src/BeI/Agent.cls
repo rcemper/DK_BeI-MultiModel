@@ -100,21 +100,23 @@ ClassMethod AddCountsToAttributeValues(ByRef AttrValueCount)
     }
 }
 
-ClassMethod BuildIndices() As %Status
+ClassMethod BuildIndices() As %Status [ PublicList = (prod, idx) ]
 {
+  
+    s sorts = ##class(BeI.SortOrder).GetAllSortOrders()
     &SQL(DECLARE prodlist CURSOR FOR SELECT id into:id FROM BeI.Product)
     &SQL(OPEN prodlist)
     while 'SQLCODE {
         &SQL(FETCH prodlist)
         if 'SQLCODE,id '="" {
-            set prod = ##class(BeI.Product).%OpenId(id)
-            set idIndex = prod.%Id()
-            set priceIndex = ($j(prod.Price,0,2) * 10000000000) + prod.%Id()
-            set nameIndex = prod.Name_$EXTRACT(100000000 + prod.%Id(),2,*)
-        
-            set ^INDEX("SORTORDER","ID",idIndex) = prod.BitString
-            set ^INDEX("SORTORDER","PRICE",priceIndex) = prod.BitString
-            set ^INDEX("SORTORDER","NAME",nameIndex) = prod.BitString
+            set prod = ##class(BeI.Product).%OpenId(id), key = ""
+            set order = sorts.GetNext(.key)
+            while key'="" {
+                set indir = ("idx="_order.IndexRule)
+                set @indir
+                set ^INDEX("SORTORDER",$zcvt(order.Field,"U"),idx) = prod.BitString
+                set order = sorts.GetNext(.key)
+            }
         }
     }
     &SQL(CLOSE prodlist)
