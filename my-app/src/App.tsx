@@ -87,7 +87,7 @@ function App() {
     let newFilters: IFilter[]=Array<IFilter>();
     let newSortOrders: ISortOrder[]=Array<ISortOrder>();
     const fetchFilters = async() => {
-      const filterResult=await fetchAPI("http://localhost:9092/BeI/filters/1",{});
+      const filterResult=await fetchAPI("http://localhost:9092/BeI/filters",{});
       newFilters=filterResult.filters;
       const sortOrderResult = await fetchAPI("http://localhost:9092/BeI/sorts",{});
       newSortOrders=sortOrderResult
