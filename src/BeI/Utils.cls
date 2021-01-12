@@ -103,31 +103,37 @@ ClassMethod BuildSorts() As %Status
     set sortPriceAsc.Name = "Price Low -> High"
     set sortPriceAsc.Direction = 1
     set sortPriceAsc.Field = "price"
+    set sortPriceAsc.IndexRule = "($j(prod.Price,0,2) * 10000000000) + prod.%Id()"
     do sortPriceAsc.%Save()
     set sortPriceDesc = ##class(BeI.SortOrder).%New()
     set sortPriceDesc.Name = "Price High -> Low"
     set sortPriceDesc.Direction = -1
     set sortPriceDesc.Field = "price"
+    set sortPriceDesc.IndexRule = "($j(prod.Price,0,2) * 10000000000) + prod.%Id()"
     do sortPriceDesc.%Save()
     set sortNameAsc = ##class(BeI.SortOrder).%New()
     set sortNameAsc.Name = "Name A->Z"
     set sortNameAsc.Direction = 1
     set sortNameAsc.Field = "name"
+    set sortNameAsc.IndexRule = "prod.Name_$EXTRACT(100000000 + prod.%Id(),2,*)"
     do sortNameAsc.%Save()
     set sortNameDesc = ##class(BeI.SortOrder).%New()
     set sortNameDesc.Name = "Name Z->A"
     set sortNameDesc.Direction = -1
     set sortNameDesc.Field = "name"
+    set sortNameDesc.IndexRule = "prod.Name_$EXTRACT(100000000 + prod.%Id(),2,*)"
     do sortNameDesc.%Save()    
     set sortIdAsc = ##class(BeI.SortOrder).%New()
     set sortIdAsc.Name = "Id A->Z"
     set sortIdAsc.Direction = 1
     set sortIdAsc.Field = "id"
+    set sortIdAsc.IndexRule = "prod.%Id()"
     do sortIdAsc.%Save()    
     set sortIdDesc = ##class(BeI.SortOrder).%New()
     set sortIdDesc.Name = "Id Z->A"
     set sortIdDesc.Direction = -1
     set sortIdDesc.Field = "id"
+    set sortIdDesc.IndexRule = "prod.%Id()"
     do sortIdDesc.%Save()    
     return result
 }
