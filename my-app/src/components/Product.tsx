@@ -9,7 +9,7 @@ export function Product({ product }: IProductProps ) {
       <div className="col">
       <div className="card mb-4 shadow-sm">
       <div className="card-header">
-        <h4 className="my-0 fw-normal">{product.id} {product.name}</h4>
+        <h4 className="my-0 fw-normal">{product.category_name} {product.name}({product.id})</h4>
       </div>
       <div className="card-body">
         <h1 className="card-title pricing-card-title">${product.price}</h1>
