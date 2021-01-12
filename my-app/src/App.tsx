@@ -35,7 +35,7 @@ function App() {
       return {...prevState, selectedSortOrder:
         {
           field:id.split("_")[0],
-          direction:+id.split("_")[1]
+          direction:Number(id.split("_")[1])
         }
       }
     });
