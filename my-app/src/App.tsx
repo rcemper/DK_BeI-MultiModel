@@ -130,7 +130,7 @@ return (
         <div>
           <SortOrder key="1" sortOrders={sortOrders.sortOrders} sortOrderCallBack={sortOrderCallBack} />
         </div>
-        <div className="row row-cols-3 px-4">
+        <div className="row row-cols-3 px-4 text-center">
           {productState.products ? productState.products.map(
             (product) => (
               <Product key={product.id} product={product} />
