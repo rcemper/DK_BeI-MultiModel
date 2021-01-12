@@ -48,7 +48,7 @@ function App() {
         "filters":state.filters,
         "sort": state.selectedSortOrder,
         "pageSize": 10,
-        "lastId": 0,
+        "lastId": "",
         "searchTerm": state.searchTerm
       };
       console.log(payload);
