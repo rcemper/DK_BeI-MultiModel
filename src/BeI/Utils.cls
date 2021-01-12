@@ -11,6 +11,8 @@ ClassMethod ResetDB() As %Status
     kill ^BeI.CategoryI
     kill ^BeI.ProductD
     kill ^BeI.ProductI
+    kill ^BeI.SortOrderD
+    kill ^BeI.SortOrderI
     kill ^BeILastBitstringPosition
     kill ^INDEX
     return $$$OK
@@ -40,6 +42,10 @@ ClassMethod BuildFirstTestSet(size As %Integer = 100) As %Status
             }
         }
         write "products populated in: ",$zh-start,!
+        set start = $zh
+        write "Creating Sort orders",!
+        do ##class(BeI.Utils).BuildSorts()
+        write "Sort orders created in: ",$zh-start,!
         write "running Agent",!
         set start = $zh
         // Run the agent
@@ -88,6 +94,42 @@ ClassMethod PopulateFromFile(filename As %String = "/shared/testData.txt") As %S
         }
     }    
     return $$$OK
+}
+
+ClassMethod BuildSorts() As %Status
+{
+    set result = $$$OK
+    set sortPriceAsc = ##class(BeI.SortOrder).%New()
+    set sortPriceAsc.Name = "Price Low -> High"
+    set sortPriceAsc.Direction = 1
+    set sortPriceAsc.Field = "price"
+    do sortPriceAsc.%Save()
+    set sortPriceDesc = ##class(BeI.SortOrder).%New()
+    set sortPriceDesc.Name = "Price High -> Low"
+    set sortPriceDesc.Direction = -1
+    set sortPriceDesc.Field = "price"
+    do sortPriceDesc.%Save()
+    set sortNameAsc = ##class(BeI.SortOrder).%New()
+    set sortNameAsc.Name = "Name A->Z"
+    set sortNameAsc.Direction = 1
+    set sortNameAsc.Field = "name"
+    do sortNameAsc.%Save()
+    set sortNameDesc = ##class(BeI.SortOrder).%New()
+    set sortNameDesc.Name = "Name Z->A"
+    set sortNameDesc.Direction = -1
+    set sortNameDesc.Field = "name"
+    do sortNameDesc.%Save()    
+    set sortIdAsc = ##class(BeI.SortOrder).%New()
+    set sortIdAsc.Name = "Id A->Z"
+    set sortIdAsc.Direction = 1
+    set sortIdAsc.Field = "id"
+    do sortIdAsc.%Save()    
+    set sortIdDesc = ##class(BeI.SortOrder).%New()
+    set sortIdDesc.Name = "Id Z->A"
+    set sortIdDesc.Direction = -1
+    set sortIdDesc.Field = "id"
+    do sortIdDesc.%Save()    
+    return result
 }
 
 ClassMethod NewCategory(Name As %String) As BeI.Category

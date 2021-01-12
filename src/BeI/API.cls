@@ -27,43 +27,7 @@ ClassMethod Filters(category As %Integer = "") As %Status
 
 ClassMethod Sorts() As %Status
 {
-    set sorts = []
-    set sortPriceAsc = {}
-    set sortPriceAsc.name = "Price Low -> High"
-    set sortPriceAsc.direction = 1
-    set sortPriceAsc.field = "price"
-    set sortPriceAsc.id=sortPriceAsc.field_"_"_sortPriceAsc.direction
-    do sorts.%Push(sortPriceAsc)
-    set sortPriceDesc = {}
-    set sortPriceDesc.name = "Price High -> Low"
-    set sortPriceDesc.direction = -1
-    set sortPriceDesc.field = "price"
-    set sortPriceDesc.id=sortPriceDesc.field_"_"_sortPriceDesc.direction
-    do sorts.%Push(sortPriceDesc)
-    set sortNameAsc = {}
-    set sortNameAsc.name = "Name A->Z"
-    set sortNameAsc.direction = 1
-    set sortNameAsc.field = "name"
-    set sortNameAsc.id=sortNameAsc.field_"_"_sortNameAsc.direction
-    do sorts.%Push(sortNameAsc)    
-    set sortNameDesc = {}
-    set sortNameDesc.name = "Name Z->A"
-    set sortNameDesc.direction = -1
-    set sortNameDesc.field = "name"
-    set sortNameDesc.id=sortNameDesc.field_"_"_sortNameDesc.direction
-    do sorts.%Push(sortNameDesc)    
-    set sortIdAsc = {}
-    set sortIdAsc.name = "Id A->Z"
-    set sortIdAsc.direction = 1
-    set sortIdAsc.field = "id"
-    set sortIdAsc.id=sortIdAsc.field_"_"_sortIdAsc.direction
-    do sorts.%Push(sortIdAsc)    
-    set sortIdDesc = {}
-    set sortIdDesc.name = "Id Z->A"
-    set sortIdDesc.direction = -1
-    set sortIdDesc.field = "id"
-    set sortIdDesc.id=sortIdDesc.field_"_"_sortIdDesc.direction
-    do sorts.%Push(sortIdDesc)
+    set sorts = ##class(BeI.SortOrder).GetAllSortOrdersDynamic()
     w sorts.%ToJSON()
     return $$$OK
 }
