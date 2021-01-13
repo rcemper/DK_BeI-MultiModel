@@ -11,6 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch_iris": "npm-watch iris_cls",
     "iris_cls": "docker exec -i my-iris iris session IRIS < iris.script",
+    "seed":"docker exec -i my-iris iris session IRIS < init.script",
     "watch": "npm-watch"
   },
   "repository": {
