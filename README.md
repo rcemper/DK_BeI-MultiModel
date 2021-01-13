@@ -42,3 +42,10 @@ in the my-app directory
 
       npm install 
       npm start
+
+## running the watcher for cls
+
+in the root directory
+
+      npm install
+      npm run watch
