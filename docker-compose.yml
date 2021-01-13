@@ -9,6 +9,7 @@ services:
     volumes:
       - data:/durable
       - ./shared:/shared
+      - ./src:/src
     environment:
      - ISC_DATA_DIRECTORY=/durable
     ports:

@@ -10,7 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch_iris": "npm-watch iris_cls",
-    "iris_cls": "echo \"run iris import\" ",
+    "iris_cls": "docker exec -i my-iris iris session IRIS < iris.script",
     "watch": "npm-watch"
   },
   "repository": {
