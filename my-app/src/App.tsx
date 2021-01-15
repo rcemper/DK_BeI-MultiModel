@@ -4,14 +4,16 @@ import { Header } from "./components/Header";
 import { Product } from "./components/Product";
 import { Filter } from "./components/Filter";
 import { SortOrder } from "./components/SortOrder";
+import { Pagination } from "./components/Pagination";
+
 //import {products, filters} from "./mocks";
 import { IFilter, IProduct, ISortOrder } from './types';
 import {/*doesProductNameContain,*/changeFilterOptionChecked,fetchAPI} from "./utils";
 import { Helmet } from 'react-helmet-async';
 
 function App() {
-  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1} });
-  const [productState,updateProductState] = useState({products: Array<IProduct>()});
+  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1} });
+  const [productState,updateProductState] = useState({products: Array<IProduct>(), curPage:1,nextExists: false});
   const [sortOrders,updateSortOrders] = useState({sortOrders: Array<ISortOrder>()});
   function onSearch(searchTerm : string) {
     /*
@@ -48,7 +50,7 @@ function App() {
         "filters":state.filters,
         "sort": state.selectedSortOrder,
         "pageSize": 10,
-        "lastId": "",
+        "pageDirection": state.pageDirection,
         "searchTerm": state.searchTerm
       };
       console.log(payload);
@@ -69,7 +71,8 @@ function App() {
       .then(
         (result) => {
           console.log(result);
-          updateProductState({...state,products: result.products})
+          updateProductState(prevState => {
+            return {...productState,products: result.products, lastID: result.lastId}})
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -138,6 +141,7 @@ return (
           ) : <div>No products</div>
         }
         </div>
+        <Pagination />
       </div>
     </div>
   </div>
