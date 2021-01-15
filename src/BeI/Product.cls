@@ -84,7 +84,7 @@ Method PopulateAttributes() As %Library.ArrayOfObjects
     return result
 }
 
-Method GetDynamicProduct() As %DynamicObject
+Method GetDynamicProduct(sortIndex As %String) As %DynamicObject
 {
     set result = {}
     set result.name = ..Name
@@ -99,6 +99,7 @@ Method GetDynamicProduct() As %DynamicObject
         do result.attributes.%Push(attr.GetDynamicAttributeValue())
         set attr = ..Attributes.GetNext(.key)
     }
+    set result."sort_index" = sortIndex
     return result
 }
 

@@ -97,22 +97,22 @@ ClassMethod Products() As %Status
     set result.products = []
     set filter = ##class(BeI.API).GetFilter()
     set result.filter = ##class(BeI.Utils).ShowBitstring(filter.bitstring)
-    set count = 0,lastIndex = "",hasNext = 0
+    set count = 0,hasNext = 0
     set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),filter.lastId),filter.sort.direction,value)
     while count < (filter.pageSize + 1),index '= "" {
         if ##class(BeI.API).TestFilter(filter.bitstring,value) {
             set oProd=##class(BeI.API).GetProductFromIndex(index)
             if oProd,($ZCONVERT(oProd.Name,"U") [ $ZCONVERT(filter.searchTerm,"U")) || (filter.searchTerm = "") {
-                do result.products.%Push(oProd.GetDynamicProduct())
+                if count < filter.pageSize { 
+                    do result.products.%Push(oProd.GetDynamicProduct(index))
+                }
                 set count = count + 1
-                if count < filter.PageSize { set lastIndex = index }
                 if count > filter.PageSize { set hasNext = 1 }
             }
         }
         set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),index),filter.sort.direction,value)
     }
     do result.%Set("hasNext",hasNext,"boolean")
-    set result.lastId = lastIndex
     set result.time = $zh - start
     write result.%ToJSON()
     return $$$OK
