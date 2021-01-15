@@ -98,7 +98,7 @@ ClassMethod Products() As %Status
     set filter = ##class(BeI.API).GetFilter()
     set result.filter = ##class(BeI.Utils).ShowBitstring(filter.bitstring)
     set count = 0,hasNext = 0
-    set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),filter.lastId),filter.sort.direction,value)
+    set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),filter.pageDirection.id),filter.sort.direction*filter.pageDirection.direction,value)
     while count < (filter.pageSize + 1),index '= "" {
         if ##class(BeI.API).TestFilter(filter.bitstring,value) {
             set oProd=##class(BeI.API).GetProductFromIndex(index)
@@ -110,7 +110,7 @@ ClassMethod Products() As %Status
                 if count > filter.PageSize { set hasNext = 1 }
             }
         }
-        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),index),filter.sort.direction,value)
+        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),index),filter.sort.direction*filter.pageDirection.direction,value)
     }
     do result.%Set("hasNext",hasNext,"boolean")
     set result.time = $zh - start
@@ -133,7 +133,7 @@ ClassMethod GetFilter() As %String [ PublicList = %request ]
         set filterObj = {}.%FromJSON(%request.Content)
         if filterObj.searchTerm '= "" { set filter.searchTerm = filterObj.searchTerm }
         if filterObj.pageSize '= "" { set filter.pageSize = filterObj.pageSize }
-        if filterObj.lastId '= "" { set filter.lastId = filterObj.lastId }
+        if filterObj.pageDirection '= "" { set filter.pageDirection = filterObj.pageDirection }
         if filterObj.sort '= "" { set filter.sort = filterObj.sort }
         set filterIter = filterObj.filters.%GetIterator()
         while filterIter.%GetNext(.key,.filtervalue) {
