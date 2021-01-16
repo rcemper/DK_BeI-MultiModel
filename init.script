@@ -1,4 +1,4 @@
 zn "USER"
-Do $system.OBJ.ImportDir("/src/",,"c",.errorlog, 1)
-
+D $system.OBJ.ImportDir("/src/",,"c",.errorlog, 1)
+d ##class(BeI.Installer).Install()
 h

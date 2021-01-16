@@ -9,6 +9,8 @@ ClassMethod Install()
     d ..AddRole()
     d ..CreateRestAPI()
     zn x
+
+    d ##class(BeI.Utils).BuildFirstTestSet(100)
 }
 
 ClassMethod CreateRestAPI()

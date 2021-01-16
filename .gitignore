@@ -4,8 +4,9 @@
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
 # iris db files
-files/
-!files/dummy
+!files/
+files/*
+!files/dummy.txt
 .vscode/
 
 # Node artifact files

@@ -25,6 +25,11 @@ function App() {
     updateState(prevState => {
       return {...prevState, searchTerm: newSearchTerm}});
   }
+  function topFunction() {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+  }
+  
 
   function filterCallBack(name:string, checked: boolean) {
     const newFilters: IFilter[]= state.filters;
@@ -48,6 +53,7 @@ function App() {
       return {...prevState, curPage: clickedPage}})
     updateState(prevState => {
       return {...prevState, pageDirection: {id: lastID,direction:direction}}});
+    //topFunction();
   }
 
   function sortOrderCallBack(id:string) {
