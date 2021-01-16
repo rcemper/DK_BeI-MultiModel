@@ -108,7 +108,7 @@ ClassMethod Products() As %Status
                         do result.products.%Push(oProd.GetDynamicProduct(index))
                     }
                     else {
-                        do result.products.%Set(filter.pageSize-count,oProd.GetDynamicProduct(index))
+                        do result.products.%Set(filter.pageSize-count-1,oProd.GetDynamicProduct(index))
                     }
                 }
                 set count = count + 1
