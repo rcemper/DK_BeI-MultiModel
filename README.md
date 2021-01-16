@@ -1,6 +1,6 @@
 # BeI-MultiModel
 ## Introduction
-This is a personal project, by Bert Sarend and myself, meant for the Intersystems Multi-model contest.
+This is a personal project, by Bert Sarens and myself, meant for the Intersystems Multi-model contest.
 
 The goal of this application was to build a product filter that was capable of filtering large amounts of products on a large amount of filters.
 This project uses objects, some sql access to these objects and plain global access to for the indexing.
