@@ -55,15 +55,15 @@ this should start a webserver listening on port 3000 and automaticly opening a b
 
 The following image briefly shows the interface. With the posibility to 
 * filter on some filters (for exemple screen size)
-   ![demo-filter](https://github.com/ivove/BeI-MultiModel/blob/main/images/demo-filter.gif)
+   ![demo-filter](https://raw.githubusercontent.com/ivove/BeI-MultiModel/main/images/demo-filter.gif)
 * search on the name
-   ![demo-search](https://github.com/ivove/BeI-MultiModel/blob/main/images/demo-search.gif)   
+   ![demo-search](https://raw.githubusercontent.com/ivove/BeI-MultiModel/main/images/demo-search.gif)   
 * change the sortorder
-   ![demo-sort](https://github.com/ivove/BeI-MultiModel/blob/main/images/demo-sort.gif)
+   ![demo-sort](https://raw.githubusercontent.com/ivove/BeI-MultiModel/main/images/demo-sort.gif)
 * use the pageing to change the page
-   ![demo](https://github.com/ivove/BeI-MultiModel/blob/main/images/demo-page.gif)
+   ![demo](https://raw.githubusercontent.com/ivove/BeI-MultiModel/main/images/demo-page.gif)
 * setting the page size
-   ![demo](https://github.com/ivove/BeI-MultiModel/blob/main/images/demo-pagesize.gif)
+   ![demo](https://raw.githubusercontent.com/ivove/BeI-MultiModel/main/images/demo-pagesize.gif)
 
 
 ## Something extra: running the watcher for cls
