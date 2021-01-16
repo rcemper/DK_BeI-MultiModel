@@ -104,10 +104,15 @@ ClassMethod Products() As %Status
             set oProd=##class(BeI.API).GetProductFromIndex(index)
             if oProd,($ZCONVERT(oProd.Name,"U") [ $ZCONVERT(filter.searchTerm,"U")) || (filter.searchTerm = "") {
                 if count < filter.pageSize { 
-                    do result.products.%Push(oProd.GetDynamicProduct(index))
+                    if filter.pageDirection.direction > 0 {
+                        do result.products.%Push(oProd.GetDynamicProduct(index))
+                    }
+                    else {
+                        do result.products.%Set(filter.pageSize-count,oProd.GetDynamicProduct(index))
+                    }
                 }
                 set count = count + 1
-                if count > filter.PageSize { set hasNext = 1 }
+                if count > filter.pageSize { set hasNext = 1 }
             }
         }
         set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),index),filter.sort.direction*filter.pageDirection.direction,value)
