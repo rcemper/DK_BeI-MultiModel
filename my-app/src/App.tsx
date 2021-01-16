@@ -10,6 +10,7 @@ import { Pagination } from "./components/Pagination";
 import { IFilter, IProduct, ISortOrder } from './types';
 import {/*doesProductNameContain,*/changeFilterOptionChecked,fetchAPI} from "./utils";
 import { Helmet } from 'react-helmet-async';
+import { updatePostfix } from 'typescript';
 
 function App() {
   const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1} });
@@ -30,6 +31,23 @@ function App() {
     changeFilterOptionChecked(newFilters,name,checked);
     updateState(prevState => {
       return {...prevState, filters: newFilters}});
+  }
+
+  function paginationCallback (clickedPage: number, curPage: number) {
+    let lastID="";
+    let direction=1;
+    if (clickedPage===1) {
+      // defaukt
+    } else if (curPage<clickedPage) {
+      lastID=productState.products[productState.products.length-1].sort_index
+    } else {
+      lastID=productState.products[0].sort_index
+      direction=-1
+    }
+    updateProductState(prevState => {
+      return {...prevState, curPage: clickedPage}})
+    updateState(prevState => {
+      return {...prevState, pageDirection: {id: lastID,direction:direction}}});
   }
 
   function sortOrderCallBack(id:string) {
@@ -72,7 +90,7 @@ function App() {
         (result) => {
           console.log(result);
           updateProductState(prevState => {
-            return {...productState,products: result.products, lastID: result.lastId}})
+            return {...productState,products: result.products, lastID: result.lastId, nextExists: result.hasNext}})
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -141,7 +159,7 @@ return (
           ) : <div>No products</div>
         }
         </div>
-        <Pagination />
+        <Pagination curPage={productState.curPage} nextExists={productState.nextExists} paginationCallback={paginationCallback}/>
       </div>
     </div>
   </div>
