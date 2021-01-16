@@ -5,6 +5,7 @@
 
 # iris db files
 files/
+!files/dummy
 .vscode/
 
 # Node artifact files
