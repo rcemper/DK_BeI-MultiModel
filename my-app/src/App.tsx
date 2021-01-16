@@ -5,6 +5,7 @@ import { Product } from "./components/Product";
 import { Filter } from "./components/Filter";
 import { SortOrder } from "./components/SortOrder";
 import { Pagination } from "./components/Pagination";
+import { PageSize} from "./components/PageSize";
 
 //import {products, filters} from "./mocks";
 import { IFilter, IProduct, ISortOrder } from './types';
@@ -13,9 +14,10 @@ import { Helmet } from 'react-helmet-async';
 import { updatePostfix } from 'typescript';
 
 function App() {
-  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1} });
+  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1}, pageSize: 9 });
   const [productState,updateProductState] = useState({products: Array<IProduct>(), curPage:1,nextExists: false});
   const [sortOrders,updateSortOrders] = useState({sortOrders: Array<ISortOrder>()});
+  const pageSizes = [9,27,63];
   function onSearch(searchTerm : string) {
     /*
     const newProducts: IProduct[] = products.filter((product) =>
@@ -67,13 +69,20 @@ function App() {
     });
   }
 
+  function pageSizeCallBack(size:number) {
+    updateState(prevState => {
+      return {...prevState, pageSize: size
+      }
+    });
+  }
+
   useEffect(() => {
     if (state.filters.length && state.selectedSortOrder.field!=="") { 
       console.log("state changed");
       let payload = {
         "filters":state.filters,
         "sort": state.selectedSortOrder,
-        "pageSize": 10,
+        "pageSize": state.pageSize,
         "pageDirection": state.pageDirection,
         "searchTerm": state.searchTerm
       };
@@ -155,6 +164,7 @@ return (
       </div>
       <div className="col-sm-9">
         <div>
+          <PageSize pageSizes={pageSizes} pageSizeCallBack={pageSizeCallBack}/>
           <SortOrder key="1" sortOrders={sortOrders.sortOrders} sortOrderCallBack={sortOrderCallBack} />
         </div>
         <div className="row row-cols-3 px-4 text-center">
