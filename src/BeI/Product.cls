@@ -3,7 +3,7 @@ Class BeI.Product Extends (%Persistent, %Populate)
 
 Property Name As %String(POPORDER = 1, POPSPEC = ".PopulateName()");
 
-Property Price As %Numeric(POPORDER = 2, POPSPEC = "Float(0,500)");
+Property Price As %Numeric(POPORDER = 2, POPSPEC = "Float(10,500)");
 
 Property Category As BeI.Category(POPORDER = 3);
 

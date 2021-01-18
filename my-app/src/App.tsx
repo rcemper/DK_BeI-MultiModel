@@ -37,7 +37,9 @@ function App() {
     const newFilters: IFilter[]= state.filters;
     changeFilterOptionChecked(newFilters,name,checked);
     updateState(prevState => {
-      return {...prevState, filters: newFilters}});
+      return {...prevState, filters: newFilters, pageDirection:  {id:"",direction: prevState.pageDirection.direction} }});
+    updateProductState(prevState => { 
+      return {...prevState, curPage:1}});
   }
 
   function paginationCallback (clickedPage: number, curPage: number) {

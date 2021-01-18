@@ -10,7 +10,7 @@ ClassMethod Install()
     d ..CreateRestAPI()
     zn x
 
-    d ##class(BeI.Utils).BuildFirstTestSet(100)
+    d ##class(BeI.Utils).BuildFirstTestSet(100000)
 }
 
 ClassMethod CreateRestAPI()
