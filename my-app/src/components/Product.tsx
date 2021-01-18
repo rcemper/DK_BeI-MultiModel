@@ -6,7 +6,7 @@ interface IProductProps {
 }
 export function Product({ product }: IProductProps ) {
     return (
-      <div className="col">
+      <div className="col mt-4">
       <div className="card mb-4 shadow-sm h-100">
         <div className="card-header">
           <h4 className="my-0 fw-normal">{product.category_name} {product.name}({product.id})</h4>

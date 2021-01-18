@@ -159,8 +159,8 @@ return (
     </script>
   </Helmet>
   <Header searchCallback={onSearch}/>
-  <div className="container--xxl .mt-2 px-4">
-    <div className="d-flex justify-content-between p-3 bg-white mb-3 align-items-center"> 
+  <div className="container--xxl px-4">
+    <div className="d-flex justify-content-between bg-white align-items-center"> 
       <span className="font-weight-bold text-uppercase">Product list</span>
       <div>
         <div className="text d-flex">Items per page
