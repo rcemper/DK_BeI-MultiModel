@@ -69,14 +69,19 @@ Method PopulateName() As %String
     return ##class(%Library.PopulateUtils).String(20)
 }
 
-Method PopulateAttributes() As %Library.ArrayOfObjects
+Method PopulateAttributes() As %Library.ArrayOfObjects [ PublicList = pos ]
 {
     set result = ##class(%Library.ArrayOfObjects).%New()
     set key = "",i = 0
     set cat = ##class(BeI.Category).%OpenId(i%Category)
     set attr = cat.Attributes.GetNext(.key)
     while key'="" {
-        set posibilities = attr.GetValues()
+        if '$DATA(pos(attr.%Id()))
+        {
+            set pos = attr.GetValues()
+            set pos(attr.%Id()) = pos 
+        }
+        set posibilities = pos(attr.%Id())
         set x = $RANDOM(posibilities.Count()-1)
         do result.SetAt(posibilities.GetAt(x),i)
         set attr = cat.Attributes.GetNext(.key),i = i + 1
