@@ -66,20 +66,24 @@ function App() {
         {
           field:id.split("_")[0],
           direction:Number(id.split("_")[1])
-        }
+        },pageDirection:  {id:"",direction: prevState.pageDirection.direction}
       }
     });
+    updateProductState(prevState => { 
+      return {...prevState, curPage:1}});
   }
 
   function pageSizeCallBack(size:number) {
     updateState(prevState => {
-      return {...prevState, pageSize: size
+      return {...prevState, pageSize: size,pageDirection:  {id:"",direction: prevState.pageDirection.direction}
       }
     });
+    updateProductState(prevState => { 
+      return {...prevState, curPage:1}});
   }
 
   useEffect(() => {
-    if (state.filters.length && state.selectedSortOrder.field!=="") { 
+    if (state.filters.length && state.selectedSortOrder?.field!=="") { 
       console.log("state changed");
       let payload = {
         "filters":state.filters,
@@ -178,14 +182,16 @@ return (
           
         </div>
         <div className="row row-cols-3 px-4 text-center">
-          {productState.products ? productState.products.map(
+          {productState.products?.length>0 ? productState.products.map(
             (product) => (
               <Product key={product.id} product={product} />
             )
-          ) : <div>No products</div>
+          ) : <div>No products found.</div>  
         }
-        </div>
+        {productState.products?.length>0 ?
         <Pagination curPage={productState.curPage} nextExists={productState.nextExists} paginationCallback={paginationCallback}/>
+        : ""}
+        </div>
       </div>
     </div>
   </div>
