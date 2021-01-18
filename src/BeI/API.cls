@@ -10,6 +10,7 @@ XData UrlMap
     <Route Url="/sorts" Method="GET" Call="Sorts" Cors="true" />
     <Route Url="/filters/:category" Method="GET" Call="Filters" Cors="true" />
     <Route Url="/products" Method="POST" Call="Products" Cors="true" />
+    <Route Url="/counts" Method="POST" Call="Counts" Cors="true" />
 </Routes>
 }
 
@@ -123,7 +124,7 @@ ClassMethod Products() As %Status
     return $$$OK
 }
 
-ClassMethod GetFilter() As %String [ PublicList = %request ]
+ClassMethod GetFilter() As %DynamicObject [ PublicList = %request ]
 {
     set filter = {},bitstring = ""
     set filter.searchTerm = ""
@@ -178,6 +179,67 @@ ClassMethod GetProductFromIndex(index As %String) As BeI.Product
     set result = $$$NULLOREF
     set id = +$e(index,*-7,*)
     if id '= "" { set result = ##class(BeI.Product).%OpenId(id) }
+    return result
+}
+
+ClassMethod Counts() As %Status
+{
+    set result = $$$OK
+    set counters = {}
+    set start = $zh
+    if %request.Content {
+        set filterObj = {}.%FromJSON(%request.Content)
+        set filter = ##class(BeI.API).GetFilter()
+        set origBitstring = filter.bitstring
+        set filterIter = filterObj.filters.%GetIterator()
+        while filterIter.%GetNext(.key,.filtervalue) {
+            set optionsIter = filtervalue.options.%GetIterator()
+            set positions = "" , pos = 1, optionKeys = ""
+            while optionsIter.%GetNext(.optionsKey,.optionsValue) {
+                set $PIECE(positions,"/",pos) = optionsValue."bit_position"
+                set $PIECE(optionKeys,"/",pos) = optionsKey
+                set pos = pos + 1
+                set filterObj.filters.%Get(key).options.%Get(optionsKey).count = 0
+            }
+            set testBitstring = origBitstring
+            for i=1:1:$LENGTH(positions,"/") { set $BIT(testBitstring,$PIECE(positions,"/",i)) = 0 }
+            for i=1:1:$LENGTH(positions,"/") {
+                set test = testBitstring
+                set $BIT(test,$PIECE(positions,"/",i)) = 1
+                set tests(key,$PIECE(optionKeys,"/",i)) = test
+            }
+        }
+        set counters.filters = filterObj.filters
+    }
+
+    set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),""),1,value)
+    while index '= "" {
+        set filterKey = $ORDER(tests(""))
+        while filterKey '= "" {
+            set optionsKey = $ORDER(tests(filterKey,""),1,testBit)
+            while optionsKey '= "" {
+                if ##class(BeI.API).TestFilter(testBit,value) {
+                    set cnt(filterKey,optionsKey) = $get(cnt(filterKey,optionsKey)) + 1
+                }
+                set optionsKey = $ORDER(tests(filterKey,optionsKey),1,testBit)
+            }
+            set filterKey = $ORDER(tests(filterKey))
+        }
+        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),index),1,value)
+    }
+
+    set filterKey = $ORDER(tests(""))
+        while filterKey '= "" {
+            set optionsKey = $ORDER(tests(filterKey,""),1,testBit)
+            while optionsKey '= "" {
+                set filterObj.filters.%Get(filterKey).options.%Get(optionsKey).count  = $get(cnt(filterKey,optionsKey))
+                set optionsKey = $ORDER(tests(filterKey,optionsKey),1,testBit)
+            }
+            set filterKey = $ORDER(tests(filterKey))
+        }
+
+    set counters.time = $zh - start
+    write counters.%ToJSON()
     return result
 }
 
