@@ -154,6 +154,14 @@ return (
   </Helmet>
   <Header searchCallback={onSearch}/>
   <div className="container--xxl .mt-2 px-4">
+    <div className="d-flex justify-content-between p-3 bg-white mb-3 align-items-center"> 
+      <span className="font-weight-bold text-uppercase">Product list</span>
+      <div>
+        <div className="text">Items per page</div>
+        <PageSize pageSizes={pageSizes} pageSizeCallBack={pageSizeCallBack}/>
+        <SortOrder key="1" sortOrders={sortOrders.sortOrders} sortOrderCallBack={sortOrderCallBack} />
+      </div>
+    </div>
     <div className="row">
       <div className="col-sm-3 px-4">
         {state.filters.map(
@@ -164,8 +172,8 @@ return (
       </div>
       <div className="col-sm-9">
         <div>
-          <PageSize pageSizes={pageSizes} pageSizeCallBack={pageSizeCallBack}/>
-          <SortOrder key="1" sortOrders={sortOrders.sortOrders} sortOrderCallBack={sortOrderCallBack} />
+          
+          
         </div>
         <div className="row row-cols-3 px-4 text-center">
           {productState.products ? productState.products.map(
