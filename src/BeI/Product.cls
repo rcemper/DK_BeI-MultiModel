@@ -66,7 +66,7 @@ Method SetBitstring() As %Status
 
 Method PopulateName() As %String
 {
-    return ##class(%Library.PopulateUtils).Product()_" "_##class(%Library.PopulateUtils).String(10)
+    return ##class(%Library.PopulateUtils).String(20)
 }
 
 Method PopulateAttributes() As %Library.ArrayOfObjects
