@@ -172,10 +172,10 @@ return (
       </div>
     </div>
     <div className="row">
-      <div className="col-sm-3 px-4">
+      <div id="firstAccordion" className="col-sm-3 px-4 accordion">
         {state.filters.map(
             (filter) => (
-              <Filter key={filter.id} filter={filter} filterCallBack={filterCallBack} />
+              <Filter key={filter.id} filter={filter} filterCallBack={filterCallBack} isFirst={filter.id===state.filters[0].id} />
             )
           )}        
       </div>
