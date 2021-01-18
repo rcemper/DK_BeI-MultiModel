@@ -163,9 +163,12 @@ return (
     <div className="d-flex justify-content-between p-3 bg-white mb-3 align-items-center"> 
       <span className="font-weight-bold text-uppercase">Product list</span>
       <div>
-        <div className="text">Items per page</div>
+        <div className="text d-flex">Items per page
         <PageSize pageSizes={pageSizes} pageSizeCallBack={pageSizeCallBack}/>
+        </div>
+        <div className="d-flex">
         <SortOrder key="1" sortOrders={sortOrders.sortOrders} sortOrderCallBack={sortOrderCallBack} />
+        </div>
       </div>
     </div>
     <div className="row">
