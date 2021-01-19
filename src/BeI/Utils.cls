@@ -28,7 +28,7 @@ ClassMethod BuildFirstTestSet(size As %Integer = 100) As %Status
         write "Populating categories - Attributes - attributevalues",!
         set start = $zh
         // populate categories - Attributes - attributevalues
-        do ##class(BeI.Utils).PopulateFromFile()
+        do ##class(BeI.Utils).PopulateFromWeb()
         write "categories - Attributes - attributevalues populated in: ",$zh-start,!
         write "Populating products",!
         set start = $zh
@@ -93,6 +93,54 @@ ClassMethod PopulateFromFile(filename As %String = "/shared/testData.txt") As %S
             }
         }
     }    
+    return $$$OK
+}
+
+ClassMethod PopulateFromWeb() As %Status
+{
+    set removeSSL = 0
+    set space = $ZNSPACE
+    zn "%SYS"
+    if '##class(Security.SSLConfigs).Exists("BeI")
+    {
+        d ##class(Security.SSLConfigs).Create("BeI")
+        set removeSSL = 1
+    }
+    zn space
+    Set stream=##class(%Stream.FileCharacter).%New()
+    Set httprequest=##class(%Net.HttpRequest).%New()
+    set httprequest.Https = 1
+    set httprequest.SSLConfiguration = "BeI"
+    set httprequest.ResponseStream = stream
+    Set httprequest.Server="raw.githubusercontent.com"
+    Do httprequest.Get("/ivove/BeI-MultiModel/main/shared/testData.txt")
+    While 'stream.AtEnd {
+        set line = stream.ReadLine()
+        set line = $tr(line,$c(13),"")
+        if line '= "" {
+            set content=$LISTFROMSTRING(line,"-")
+            set type=$LIST(content,1)
+            if type = "cat" {
+                set cat($LIST(content,2)) = ##class(BeI.Utils).NewCategory($LIST(content,3))
+            } elseif type = "attr" {
+                set attr($LIST(content,2)) = ##class(BeI.Utils).NewAttribute($LIST(content,3))
+            } elseif type = "lnk" {
+                do cat($LIST(content,2)).Attributes.SetAt(attr($LIST(content,3)),cat($LIST(content,2)).Attributes.Count())
+                do cat($LIST(content,2)).%Save()
+            } elseif type = "attrval" {
+                set x = ##class(BeI.AttributeValue).%New()
+                set x.Attribute = attr($LIST(content,2))
+                set x.Name = $LIST(content,3)
+                set x.Value = $LIST(content,4)
+                do x.%Save()
+            }
+        }
+    } 
+    if removeSSL {
+        zn "%SYS"
+        d ##class(Security.SSLConfigs).Delete("BeI")
+        zn space
+    }   
     return $$$OK
 }
 
