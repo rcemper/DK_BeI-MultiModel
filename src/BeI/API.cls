@@ -185,23 +185,38 @@ ClassMethod GetProductFromIndex(index As %String) As BeI.Product
 ClassMethod Counts() As %Status
 {
     set result = $$$OK
+    set bitstring = ""
     set counters = {}
     set start = $zh
+    set len = ##class(BeI.Agent).GetLastBitstringPosition()
+    for i = 1:1:len {
+        set $BIT(bitstring, i) = 1
+    }
     if %request.Content {
         set filterObj = {}.%FromJSON(%request.Content)
-        set filter = ##class(BeI.API).GetFilter()
-        set origBitstring = filter.bitstring
         set filterIter = filterObj.filters.%GetIterator()
         while filterIter.%GetNext(.key,.filtervalue) {
             set optionsIter = filtervalue.options.%GetIterator()
             set positions = "" , pos = 1, optionKeys = ""
-            while optionsIter.%GetNext(.optionsKey,.optionsValue) {
+            s foundOne=0
+            while 'foundOne && optionsIter.%GetNext(.optionsKey,.optionsValue){
+                if optionsValue.checked {
+                    s foundOne=1
+                }
+            }
+            set optionsIter = filtervalue.options.%GetIterator()
+            while optionsIter.%GetNext(.optionsKey,.optionsValue) {               
                 set $PIECE(positions,"/",pos) = optionsValue."bit_position"
                 set $PIECE(optionKeys,"/",pos) = optionsKey
                 set pos = pos + 1
                 set filterObj.filters.%Get(key).options.%Get(optionsKey).count = 0
+                if foundOne {
+                    if optionsValue.checked = 0 {
+                        set $BIT(bitstring,optionsValue."bit_position") = 0
+                    }
+                }
             }
-            set testBitstring = origBitstring
+            set testBitstring = bitstring
             for i=1:1:$LENGTH(positions,"/") { set $BIT(testBitstring,$PIECE(positions,"/",i)) = 0 }
             for i=1:1:$LENGTH(positions,"/") {
                 set test = testBitstring
@@ -212,7 +227,7 @@ ClassMethod Counts() As %Status
         set counters.filters = filterObj.filters
     }
 
-    set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),""),1,value)
+    set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT("ID","U"),""),1,value)
     while index '= "" {
         set filterKey = $ORDER(tests(""))
         while filterKey '= "" {
@@ -225,7 +240,7 @@ ClassMethod Counts() As %Status
             }
             set filterKey = $ORDER(tests(filterKey))
         }
-        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),index),1,value)
+        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT("ID","U"),index),1,value)
     }
 
     set filterKey = $ORDER(tests(""))
