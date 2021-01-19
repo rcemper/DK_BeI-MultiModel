@@ -3,7 +3,7 @@ Class BeI.Product Extends (%Persistent, %Populate)
 
 Property Name As %String(POPORDER = 1, POPSPEC = ".PopulateName()");
 
-Property Price As %Numeric(POPORDER = 2, POPSPEC = "Float(0,500)");
+Property Price As %Numeric(POPORDER = 2, POPSPEC = "Float(10,500)");
 
 Property Category As BeI.Category(POPORDER = 3);
 
@@ -66,17 +66,22 @@ Method SetBitstring() As %Status
 
 Method PopulateName() As %String
 {
-    return ##class(%Library.PopulateUtils).Product()_" "_##class(%Library.PopulateUtils).String(10)
+    return ##class(%Library.PopulateUtils).String(20)
 }
 
-Method PopulateAttributes() As %Library.ArrayOfObjects
+Method PopulateAttributes() As %Library.ArrayOfObjects [ PublicList = pos ]
 {
     set result = ##class(%Library.ArrayOfObjects).%New()
     set key = "",i = 0
     set cat = ##class(BeI.Category).%OpenId(i%Category)
     set attr = cat.Attributes.GetNext(.key)
     while key'="" {
-        set posibilities = attr.GetValues()
+        if '$DATA(pos(attr.%Id()))
+        {
+            set pos = attr.GetValues()
+            set pos(attr.%Id()) = pos 
+        }
+        set posibilities = pos(attr.%Id())
         set x = $RANDOM(posibilities.Count()-1)
         do result.SetAt(posibilities.GetAt(x),i)
         set attr = cat.Attributes.GetNext(.key),i = i + 1
@@ -84,7 +89,7 @@ Method PopulateAttributes() As %Library.ArrayOfObjects
     return result
 }
 
-Method GetDynamicProduct() As %DynamicObject
+Method GetDynamicProduct(sortIndex As %String) As %DynamicObject
 {
     set result = {}
     set result.name = ..Name
@@ -99,6 +104,7 @@ Method GetDynamicProduct() As %DynamicObject
         do result.attributes.%Push(attr.GetDynamicAttributeValue())
         set attr = ..Attributes.GetNext(.key)
     }
+    set result."sort_index" = sortIndex
     return result
 }
 

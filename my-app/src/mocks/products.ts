@@ -1,4 +1,5 @@
-import { IProduct } from "../types"
+export {}
+/*import { IProduct } from "../types"
 
 export const products: IProduct[] = [
     { 
@@ -30,3 +31,4 @@ export const products: IProduct[] = [
         "price": 10
       }
 ];
+*/

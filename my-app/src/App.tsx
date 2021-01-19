@@ -4,15 +4,20 @@ import { Header } from "./components/Header";
 import { Product } from "./components/Product";
 import { Filter } from "./components/Filter";
 import { SortOrder } from "./components/SortOrder";
+import { Pagination } from "./components/Pagination";
+import { PageSize} from "./components/PageSize";
+
 //import {products, filters} from "./mocks";
 import { IFilter, IProduct, ISortOrder } from './types';
 import {/*doesProductNameContain,*/changeFilterOptionChecked,fetchAPI} from "./utils";
 import { Helmet } from 'react-helmet-async';
+import { updatePostfix } from 'typescript';
 
 function App() {
-  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1} });
-  const [productState,updateProductState] = useState({products: Array<IProduct>()});
+  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1}, pageSize: 9 });
+  const [productState,updateProductState] = useState({products: Array<IProduct>(), curPage:1,nextExists: false});
   const [sortOrders,updateSortOrders] = useState({sortOrders: Array<ISortOrder>()});
+  const pageSizes = [9,27,63];
   function onSearch(searchTerm : string) {
     /*
     const newProducts: IProduct[] = products.filter((product) =>
@@ -22,12 +27,37 @@ function App() {
     updateState(prevState => {
       return {...prevState, searchTerm: newSearchTerm}});
   }
+  function topFunction() {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+  }
+  
 
   function filterCallBack(name:string, checked: boolean) {
     const newFilters: IFilter[]= state.filters;
     changeFilterOptionChecked(newFilters,name,checked);
     updateState(prevState => {
-      return {...prevState, filters: newFilters}});
+      return {...prevState, filters: newFilters, pageDirection:  {id:"",direction: prevState.pageDirection.direction} }});
+    updateProductState(prevState => { 
+      return {...prevState, curPage:1}});
+  }
+
+  function paginationCallback (clickedPage: number, curPage: number) {
+    let lastID="";
+    let direction=1;
+    if (clickedPage===1) {
+      // defaukt
+    } else if (curPage<clickedPage) {
+      lastID=productState.products[productState.products.length-1].sort_index
+    } else {
+      lastID=productState.products[0].sort_index
+      direction=-1
+    }
+    updateProductState(prevState => {
+      return {...prevState, curPage: clickedPage}})
+    updateState(prevState => {
+      return {...prevState, pageDirection: {id: lastID,direction:direction}}});
+    //topFunction();
   }
 
   function sortOrderCallBack(id:string) {
@@ -36,19 +66,30 @@ function App() {
         {
           field:id.split("_")[0],
           direction:Number(id.split("_")[1])
-        }
+        },pageDirection:  {id:"",direction: prevState.pageDirection.direction}
       }
     });
+    updateProductState(prevState => { 
+      return {...prevState, curPage:1}});
+  }
+
+  function pageSizeCallBack(size:number) {
+    updateState(prevState => {
+      return {...prevState, pageSize: size,pageDirection:  {id:"",direction: prevState.pageDirection.direction}
+      }
+    });
+    updateProductState(prevState => { 
+      return {...prevState, curPage:1}});
   }
 
   useEffect(() => {
-    if (state.filters.length && state.selectedSortOrder.field!=="") { 
+    if (state.filters.length && state.selectedSortOrder?.field!=="") { 
       console.log("state changed");
       let payload = {
         "filters":state.filters,
         "sort": state.selectedSortOrder,
-        "pageSize": 10,
-        "lastId": "",
+        "pageSize": state.pageSize,
+        "pageDirection": state.pageDirection,
         "searchTerm": state.searchTerm
       };
       console.log(payload);
@@ -69,7 +110,8 @@ function App() {
       .then(
         (result) => {
           console.log(result);
-          updateProductState({...state,products: result.products})
+          updateProductState(prevState => {
+            return {...productState,products: result.products, lastID: result.lastId, nextExists: result.hasNext}})
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -117,26 +159,41 @@ return (
     </script>
   </Helmet>
   <Header searchCallback={onSearch}/>
-  <div className="container--xxl .mt-2 px-4">
+  <div className="container--xxl px-4">
+    <div className="d-flex justify-content-between bg-white align-items-center"> 
+      <span className="font-weight-bold text-uppercase">Product list</span>
+      <div>
+        <div className="text d-flex">Items per page
+        <PageSize pageSizes={pageSizes} pageSizeCallBack={pageSizeCallBack}/>
+        </div>
+        <div className="d-flex">
+        <SortOrder key="1" sortOrders={sortOrders.sortOrders} sortOrderCallBack={sortOrderCallBack} />
+        </div>
+      </div>
+    </div>
     <div className="row">
-      <div className="col-sm-3 px-4">
+      <div id="firstAccordion" className="col-sm-3 px-4 accordion">
         {state.filters.map(
             (filter) => (
-              <Filter key={filter.id} filter={filter} filterCallBack={filterCallBack} />
+              <Filter key={filter.id} filter={filter} filterCallBack={filterCallBack} isFirst={filter.id===state.filters[0].id} />
             )
           )}        
       </div>
       <div className="col-sm-9">
         <div>
-          <SortOrder key="1" sortOrders={sortOrders.sortOrders} sortOrderCallBack={sortOrderCallBack} />
+          
+          
         </div>
         <div className="row row-cols-3 px-4 text-center">
-          {productState.products ? productState.products.map(
+          {productState.products?.length>0 ? productState.products.map(
             (product) => (
               <Product key={product.id} product={product} />
             )
-          ) : <div>No products</div>
+          ) : <div>No products found.</div>  
         }
+        {productState.products?.length>0 ?
+        <Pagination curPage={productState.curPage} nextExists={productState.nextExists} paginationCallback={paginationCallback}/>
+        : ""}
         </div>
       </div>
     </div>

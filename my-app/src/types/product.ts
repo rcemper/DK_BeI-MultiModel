@@ -7,4 +7,5 @@ export interface IProduct {
     category_name: string;
     price: number;
     attributes?: Array<IAttribute>;
+    sort_index: string;
   }
