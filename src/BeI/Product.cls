@@ -89,7 +89,7 @@ Method PopulateAttributes() As %Library.ArrayOfObjects [ PublicList = pos ]
     return result
 }
 
-Method GetDynamicProduct(sortIndex As %String) As %DynamicObject
+Method GetDynamicProduct(sortIndex As %String = "") As %DynamicObject
 {
     set result = {}
     set result.name = ..Name
