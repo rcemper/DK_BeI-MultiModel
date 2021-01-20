@@ -287,7 +287,7 @@ ClassMethod Products() As %Status
                 }
                 set count = count + 1
                 if count > filter.pageSize { set hasNext = 1 }
-           //}
+           }
         }
         set index = $ORDER(^INDEX("SORTORDER",sortField,index),filter.sort.direction*filter.pageDirection.direction,value)
     }
@@ -295,7 +295,6 @@ ClassMethod Products() As %Status
     set result.time = $zh - start
     write result.%ToJSON()
     return $$$OK
-}
 }
 
 }
