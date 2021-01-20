@@ -91,7 +91,7 @@ ClassMethod AttributeFilters(filters As %DynamicArray, category As %Integer = ""
     return filters
 }
 
-ClassMethod Products() As %Status
+ClassMethod ProductsBackup() As %Status
 {
     set start = $zh
     set result = {}
@@ -241,6 +241,45 @@ ClassMethod Counts() As %Status
     set counters.time = $zh - start
     write counters.%ToJSON()
     return result
+}
+
+ClassMethod Products() As %Status
+{
+    set start = $zh
+    set result = {}
+    set result.products = []
+    set filter = ##class(BeI.API).GetFilter()
+    set result.filter = ##class(BeI.Utils).ShowBitstring(filter.bitstring)
+    set count = 0,hasNext = 0
+    set sortField=$ZCONVERT(filter.sort.field,"U")
+    set index = $ORDER(^INDEX("SORTORDER",sortField,filter.pageDirection.id),filter.sort.direction*filter.pageDirection.direction,value)
+    while index '= "" {
+        if ##class(BeI.API).TestFilter(filter.bitstring,value) {
+            //if (filter.searchTerm = "") || (oProd && (($ZCONVERT(oProd.Name,"U") [ $ZCONVERT(filter.searchTerm,"U")))  {
+                if count < filter.pageSize {
+                    /*
+                    set oProd=##class(BeI.API).GetProductFromIndex(index) 
+                    if filter.pageDirection.direction > 0 {
+                        do result.products.%Push(oProd.GetDynamicProduct(index))
+                    }
+                    else {
+                        do result.products.%Set(filter.pageSize-count-1,oProd.GetDynamicProduct(index))
+                    }
+                    */
+                } 
+                for i=1:1:131 {
+                    s counts(i)=$GET(counts(i))+$BIT(value,i)
+                }
+                set count = count + 1
+                if count > filter.pageSize { set hasNext = 1 }
+           //}
+        }
+        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),index),filter.sort.direction*filter.pageDirection.direction,value)
+    }
+    do result.%Set("hasNext",hasNext,"boolean")
+    set result.time = $zh - start
+    write result.%ToJSON()
+    return $$$OK
 }
 
 }
