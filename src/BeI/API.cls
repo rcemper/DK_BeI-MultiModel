@@ -137,7 +137,7 @@ ClassMethod GetFilter() As %DynamicObject [ PublicList = %request ]
     }
     if %request.Content {
         set filterObj = {}.%FromJSON(%request.Content)
-        if filterObj.searchTerm '= "" { set filter.searchTerm = filterObj.searchTerm }
+        if filterObj.searchTerm '= "" { set filter.searchTerm = $ZCONVERT(filterObj.searchTerm,"U") }
         if filterObj.pageSize '= "" { set filter.pageSize = filterObj.pageSize }
         if filterObj.pageDirection '= "" { set filter.pageDirection = filterObj.pageDirection }
         if filterObj.sort '= "" { set filter.sort = filterObj.sort }
@@ -178,7 +178,7 @@ ClassMethod GetProductFromIndex(index As %String) As BeI.Product
 {
     set result = $$$NULLOREF
     set id = +$e(index,*-7,*)
-    if id '= "" { set result = ##class(BeI.Product).%OpenId(id) }
+    if id '= "" { set result = ##class(BeI.Product).%OpenId(id).GetDynamicProduct() }
     return result
 }
 
@@ -269,32 +269,33 @@ ClassMethod Products() As %Status
     set sortField=$ZCONVERT(filter.sort.field,"U")
     set index = $ORDER(^INDEX("SORTORDER",sortField,filter.pageDirection.id),filter.sort.direction*filter.pageDirection.direction,value)
     while index '= "" {
-        if ##class(BeI.API).TestFilter(filter.bitstring,value) {
-            //if (filter.searchTerm = "") || (oProd && (($ZCONVERT(oProd.Name,"U") [ $ZCONVERT(filter.searchTerm,"U")))  {
+        set testName = $LIST(value,2), testBitstring = $LIST(value,1)
+        if ##class(BeI.API).TestFilter(filter.bitstring,testBitstring) {
+            if (filter.searchTerm = "") || (testName [ filter.searchTerm)  {
                 if count < filter.pageSize {
-                    /*
+                    
                     set oProd=##class(BeI.API).GetProductFromIndex(index) 
                     if filter.pageDirection.direction > 0 {
-                        do result.products.%Push(oProd.GetDynamicProduct(index))
+                        do result.products.%Push(oProd)
                     }
                     else {
-                        do result.products.%Set(filter.pageSize-count-1,oProd.GetDynamicProduct(index))
+                        do result.products.%Set(filter.pageSize-count-1,oProd)
                     }
-                    */
                 } 
                 for i=1:1:131 {
-                    s counts(i)=$GET(counts(i))+$BIT(value,i)
+                    s counts(i)=$GET(counts(i))+$BIT(testBitstring,i)
                 }
                 set count = count + 1
                 if count > filter.pageSize { set hasNext = 1 }
            //}
         }
-        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT(filter.sort.field,"U"),index),filter.sort.direction*filter.pageDirection.direction,value)
+        set index = $ORDER(^INDEX("SORTORDER",sortField,index),filter.sort.direction*filter.pageDirection.direction,value)
     }
     do result.%Set("hasNext",hasNext,"boolean")
     set result.time = $zh - start
     write result.%ToJSON()
     return $$$OK
+}
 }
 
 }
