@@ -186,6 +186,7 @@ ClassMethod Counts() As %Status
 {
     set result = $$$OK
     set bitstring = ""
+    set searchTerm = ""
     set counters = {}
     set start = $zh
     set len = ##class(BeI.Agent).GetLastBitstringPosition()
@@ -194,15 +195,20 @@ ClassMethod Counts() As %Status
     }
     if %request.Content {
         set filterObj = {}.%FromJSON(%request.Content)
+        set searchTerm = $ZCONVERT(filterObj.searchTerm,"U")
         set filterIter = filterObj.filters.%GetIterator()
+        set todo = 0
         while filterIter.%GetNext(.key,.filtervalue) {
             set optionsIter = filtervalue.options.%GetIterator()
             set positions = "" , pos = 1, optionKeys = ""
-            s foundOne=0
-            while 'foundOne && optionsIter.%GetNext(.optionsKey,.optionsValue){
+            k foundOne
+            s foundOne=0,countOptions=0
+            while optionsIter.%GetNext(.optionsKey,.optionsValue){
                 if optionsValue.checked {
-                    s foundOne=1
+                    s foundOne=foundOne + 1
+                    s countOptions = countOptions + 1
                 }
+                set foundOne(optionsValue."bit_position") = ""
             }
             set optionsIter = filtervalue.options.%GetIterator()
             while optionsIter.%GetNext(.optionsKey,.optionsValue) {               
@@ -216,42 +222,45 @@ ClassMethod Counts() As %Status
                     }
                 }
             }
+            if foundOne '= countOptions { 
+                //bijhouden welke filters getest moeten worden
+                merge todo(todo) = foundOne
+                set todo = todo + 1
+            }
+        }
+        set tests = 0
+        for i = 0:1:todo-1 {
             set testBitstring = bitstring
-            for i=1:1:$LENGTH(positions,"/") { set $BIT(testBitstring,$PIECE(positions,"/",i)) = 0 }
-            for i=1:1:$LENGTH(positions,"/") {
-                set test = testBitstring
-                set $BIT(test,$PIECE(positions,"/",i)) = 1
-                set tests(key,$PIECE(optionKeys,"/",i)) = test
+            set x = $ORDER(todo(i,""))
+            while x '= "" {
+                set $BIT(testBitstring,x)=0
+                set x=$ORDER(todo(i,x))
+            }
+            set x = $ORDER(todo(i,""))
+            while x '= "" {
+                set newBitstring = testBitstring
+                set $BIT(newBitstring,x)=1
+                set tests(tests)=newBitstring
+                set tests = tests + 1
+                set x=$ORDER(todo(i,x))
             }
         }
-        set counters.filters = filterObj.filters
+            
     }
-
-    set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT("ID","U"),""),1,value)
+    zw tests
+    set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
+    w index,!
     while index '= "" {
-        set filterKey = $ORDER(tests(""))
-        while filterKey '= "" {
-            set optionsKey = $ORDER(tests(filterKey,""),1,testBit)
-            while optionsKey '= "" {
-                if ##class(BeI.API).TestFilter(testBit,value) {
-                    set cnt(filterKey,optionsKey) = $get(cnt(filterKey,optionsKey)) + 1
+        set testName = $LIST(value,2), testBitstring = $LIST(value,1),bitcount = $BITCOUNT(testBitstring)
+        if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
+            if (searchTerm = "") || (testName [ searchTerm)  {
+                for i=1:1:bitcount {
+                    s counts(i)=$GET(counts(i))+$BIT(testBitstring,i)
                 }
-                set optionsKey = $ORDER(tests(filterKey,optionsKey),1,testBit)
-            }
-            set filterKey = $ORDER(tests(filterKey))
+           }
         }
-        set index = $ORDER(^INDEX("SORTORDER",$ZCONVERT("ID","U"),index),1,value)
+        set index = $ORDER(^INDEX("SORTORDER","ID",index),1,value)
     }
-
-    set filterKey = $ORDER(tests(""))
-        while filterKey '= "" {
-            set optionsKey = $ORDER(tests(filterKey,""),1,testBit)
-            while optionsKey '= "" {
-                set filterObj.filters.%Get(filterKey).options.%Get(optionsKey).count  = $get(cnt(filterKey,optionsKey))
-                set optionsKey = $ORDER(tests(filterKey,optionsKey),1,testBit)
-            }
-            set filterKey = $ORDER(tests(filterKey))
-        }
 
     set counters.time = $zh - start
     write counters.%ToJSON()
@@ -269,7 +278,7 @@ ClassMethod Products() As %Status
     set sortField=$ZCONVERT(filter.sort.field,"U")
     set index = $ORDER(^INDEX("SORTORDER",sortField,filter.pageDirection.id),filter.sort.direction*filter.pageDirection.direction,value)
     while index '= "" {
-        set testName = $LIST(value,2), testBitstring = $LIST(value,1)
+        set testName = $LIST(value,2), testBitstring = $LIST(value,1),bitcount = $BITCOUNT(testBitstring)
         if ##class(BeI.API).TestFilter(filter.bitstring,testBitstring) {
             if (filter.searchTerm = "") || (testName [ filter.searchTerm)  {
                 if count < filter.pageSize {
@@ -282,7 +291,7 @@ ClassMethod Products() As %Status
                         do result.products.%Set(filter.pageSize-count-1,oProd)
                     }
                 } 
-                for i=1:1:131 {
+                for i=1:1:bitcount {
                     s counts(i)=$GET(counts(i))+$BIT(testBitstring,i)
                 }
                 set count = count + 1
