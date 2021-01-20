@@ -178,7 +178,7 @@ ClassMethod GetProductFromIndex(index As %String) As BeI.Product
 {
     set result = $$$NULLOREF
     set id = +$e(index,*-7,*)
-    if id '= "" { set result = ##class(BeI.Product).%OpenId(id).GetDynamicProduct() }
+    if id '= "" { set result = ##class(BeI.Product).%OpenId(id).GetDynamicProduct(index) }
     return result
 }
 
@@ -291,6 +291,7 @@ ClassMethod Products() As %Status
         }
         set index = $ORDER(^INDEX("SORTORDER",sortField,index),filter.sort.direction*filter.pageDirection.direction,value)
     }
+    set result.totalCount = count
     do result.%Set("hasNext",hasNext,"boolean")
     set result.time = $zh - start
     write result.%ToJSON()
