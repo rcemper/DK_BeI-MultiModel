@@ -1,0 +1,809 @@
+{
+    "sort": {
+        "field": "price",
+        "direction": -1
+    },
+    "filters": [
+        {
+            "name": "Categories",
+            "id": -1,
+            "options": [
+                {
+                    "id": -1,
+                    "name": "TV",
+                    "value": "1",
+                    "bit_position": 1,
+                    "checked": false
+                },
+                {
+                    "id": -2,
+                    "name": "Laptop",
+                    "value": "2",
+                    "bit_position": 2,
+                    "checked": true
+                },
+                {
+                    "id": -3,
+                    "name": "Tablet",
+                    "value": "3",
+                    "bit_position": 3,
+                    "checked": true
+                }
+            ]
+        },
+        {
+            "name": "Screen Size",
+            "id": "1",
+            "options": [
+                {
+                    "name": "10.1",
+                    "id": "1",
+                    "value": "1",
+                    "bit_position": 4,
+                    "checked": false
+                },
+                {
+                    "name": "12.3",
+                    "id": "2",
+                    "value": "2",
+                    "bit_position": 5,
+                    "checked": false
+                },
+                {
+                    "name": "13.3",
+                    "id": "3",
+                    "value": "3",
+                    "bit_position": 6,
+                    "checked": false
+                },
+                {
+                    "name": "14",
+                    "id": "4",
+                    "value": "4",
+                    "bit_position": 7,
+                    "checked": false
+                },
+                {
+                    "name": "15.6",
+                    "id": "5",
+                    "value": "5",
+                    "bit_position": 8,
+                    "checked": false
+                },
+                {
+                    "name": "17.3",
+                    "id": "6",
+                    "value": "6",
+                    "bit_position": 9,
+                    "checked": false
+                },
+                {
+                    "name": "42",
+                    "id": "7",
+                    "value": "7",
+                    "bit_position": 10,
+                    "checked": false
+                },
+                {
+                    "name": "57.5",
+                    "id": "8",
+                    "value": "8",
+                    "bit_position": 11,
+                    "checked": false
+                },
+                {
+                    "name": "65",
+                    "id": "9",
+                    "value": "9",
+                    "bit_position": 12,
+                    "checked": false
+                },
+                {
+                    "name": "82",
+                    "id": "10",
+                    "value": "10",
+                    "bit_position": 13,
+                    "checked": false
+                },
+                {
+                    "name": "98",
+                    "id": "11",
+                    "value": "11",
+                    "bit_position": 14,
+                    "checked": false
+                },
+                {
+                    "name": "5",
+                    "id": "12",
+                    "value": "12",
+                    "bit_position": 15,
+                    "checked": false
+                },
+                {
+                    "name": "8.1",
+                    "id": "13",
+                    "value": "13",
+                    "bit_position": 16,
+                    "checked": false
+                },
+                {
+                    "name": "10.8",
+                    "id": "14",
+                    "value": "14",
+                    "bit_position": 17,
+                    "checked": false
+                },
+                {
+                    "name": "12",
+                    "id": "15",
+                    "value": "15",
+                    "bit_position": 18,
+                    "checked": false
+                },
+                {
+                    "name": "16",
+                    "id": "16",
+                    "value": "16",
+                    "bit_position": 19,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "Energy Class",
+            "id": "2",
+            "options": [
+                {
+                    "name": "A+++",
+                    "id": "17",
+                    "value": "1",
+                    "bit_position": 20,
+                    "checked": true
+                },
+                {
+                    "name": "A++",
+                    "id": "18",
+                    "value": "2",
+                    "bit_position": 21,
+                    "checked": false
+                },
+                {
+                    "name": "A+",
+                    "id": "19",
+                    "value": "3",
+                    "bit_position": 22,
+                    "checked": false
+                },
+                {
+                    "name": "A",
+                    "id": "20",
+                    "value": "4",
+                    "bit_position": 23,
+                    "checked": false
+                },
+                {
+                    "name": "B",
+                    "id": "21",
+                    "value": "5",
+                    "bit_position": 24,
+                    "checked": false
+                },
+                {
+                    "name": "C",
+                    "id": "22",
+                    "value": "6",
+                    "bit_position": 25,
+                    "checked": false
+                },
+                {
+                    "name": "D",
+                    "id": "23",
+                    "value": "7",
+                    "bit_position": 26,
+                    "checked": false
+                },
+                {
+                    "name": "E",
+                    "id": "24",
+                    "value": "8",
+                    "bit_position": 27,
+                    "checked": false
+                },
+                {
+                    "name": "F",
+                    "id": "25",
+                    "value": "9",
+                    "bit_position": 28,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "CPU",
+            "id": "3",
+            "options": [
+                {
+                    "name": "AMD Ryzen 5",
+                    "id": "26",
+                    "value": "1",
+                    "bit_position": 29,
+                    "checked": false
+                },
+                {
+                    "name": "AMD Ryzen 7",
+                    "id": "27",
+                    "value": "2",
+                    "bit_position": 30,
+                    "checked": false
+                },
+                {
+                    "name": "Intel Core i3",
+                    "id": "28",
+                    "value": "3",
+                    "bit_position": 31,
+                    "checked": false
+                },
+                {
+                    "name": "Intel Core i5",
+                    "id": "29",
+                    "value": "4",
+                    "bit_position": 32,
+                    "checked": false
+                },
+                {
+                    "name": "Intel Core i7",
+                    "id": "30",
+                    "value": "5",
+                    "bit_position": 33,
+                    "checked": false
+                },
+                {
+                    "name": "Intel Core i9",
+                    "id": "31",
+                    "value": "6",
+                    "bit_position": 34,
+                    "checked": false
+                },
+                {
+                    "name": "Qualcomm Snapdragon 662",
+                    "id": "32",
+                    "value": "7",
+                    "bit_position": 35,
+                    "checked": false
+                },
+                {
+                    "name": "Qualcomm Snapdragon 865",
+                    "id": "33",
+                    "value": "8",
+                    "bit_position": 36,
+                    "checked": false
+                },
+                {
+                    "name": "MediaTek Helio P22T",
+                    "id": "34",
+                    "value": "9",
+                    "bit_position": 37,
+                    "checked": false
+                },
+                {
+                    "name": "Apple A12 Bionic",
+                    "id": "35",
+                    "value": "10",
+                    "bit_position": 38,
+                    "checked": false
+                },
+                {
+                    "name": "Apple A12Z Bionic",
+                    "id": "36",
+                    "value": "12",
+                    "bit_position": 39,
+                    "checked": false
+                },
+                {
+                    "name": "Apple A14 Bionic",
+                    "id": "37",
+                    "value": "13",
+                    "bit_position": 40,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "OS",
+            "id": "4",
+            "options": [
+                {
+                    "name": "Chrome OS",
+                    "id": "38",
+                    "value": "1",
+                    "bit_position": 41,
+                    "checked": false
+                },
+                {
+                    "name": "macOS 10.15",
+                    "id": "39",
+                    "value": "2",
+                    "bit_position": 42,
+                    "checked": false
+                },
+                {
+                    "name": "macOS BigSur",
+                    "id": "40",
+                    "value": "3",
+                    "bit_position": 43,
+                    "checked": false
+                },
+                {
+                    "name": "Windows 7",
+                    "id": "41",
+                    "value": "4",
+                    "bit_position": 44,
+                    "checked": false
+                },
+                {
+                    "name": "Windows 10",
+                    "id": "42",
+                    "value": "5",
+                    "bit_position": 45,
+                    "checked": false
+                },
+                {
+                    "name": "Google Android 9.0",
+                    "id": "43",
+                    "value": "6",
+                    "bit_position": 46,
+                    "checked": false
+                },
+                {
+                    "name": "Google Android 10.0",
+                    "id": "44",
+                    "value": "7",
+                    "bit_position": 47,
+                    "checked": false
+                },
+                {
+                    "name": "iOS 12",
+                    "id": "45",
+                    "value": "8",
+                    "bit_position": 48,
+                    "checked": false
+                },
+                {
+                    "name": "IPadOS",
+                    "id": "46",
+                    "value": "9",
+                    "bit_position": 49,
+                    "checked": false
+                },
+                {
+                    "name": "Windows 8",
+                    "id": "47",
+                    "value": "10",
+                    "bit_position": 50,
+                    "checked": false
+                },
+                {
+                    "name": "Windows 8.1",
+                    "id": "48",
+                    "value": "11",
+                    "bit_position": 51,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "Resolution",
+            "id": "5",
+            "options": [
+                {
+                    "name": "1920x1200",
+                    "id": "49",
+                    "value": "1",
+                    "bit_position": 52,
+                    "checked": false
+                },
+                {
+                    "name": "2000x1200",
+                    "id": "50",
+                    "value": "2",
+                    "bit_position": 53,
+                    "checked": false
+                },
+                {
+                    "name": "2160x1620",
+                    "id": "51",
+                    "value": "3",
+                    "bit_position": 54,
+                    "checked": false
+                },
+                {
+                    "name": "2360x1640",
+                    "id": "52",
+                    "value": "4",
+                    "bit_position": 55,
+                    "checked": false
+                },
+                {
+                    "name": "2560x1600",
+                    "id": "53",
+                    "value": "5",
+                    "bit_position": 56,
+                    "checked": false
+                },
+                {
+                    "name": "2732x2048",
+                    "id": "54",
+                    "value": "6",
+                    "bit_position": 57,
+                    "checked": false
+                },
+                {
+                    "name": "1366x768",
+                    "id": "55",
+                    "value": "7",
+                    "bit_position": 58,
+                    "checked": false
+                },
+                {
+                    "name": "1600x900",
+                    "id": "56",
+                    "value": "8",
+                    "bit_position": 59,
+                    "checked": false
+                },
+                {
+                    "name": "1920x180",
+                    "id": "57",
+                    "value": "9",
+                    "bit_position": 60,
+                    "checked": false
+                },
+                {
+                    "name": "2256x1504",
+                    "id": "58",
+                    "value": "10",
+                    "bit_position": 61,
+                    "checked": false
+                },
+                {
+                    "name": "3840x2160",
+                    "id": "59",
+                    "value": "11",
+                    "bit_position": 62,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "Keyboardlayout",
+            "id": "6",
+            "options": [
+                {
+                    "name": "Azerty",
+                    "id": "60",
+                    "value": "1",
+                    "bit_position": 63,
+                    "checked": false
+                },
+                {
+                    "name": "Qwerty",
+                    "id": "61",
+                    "value": "2",
+                    "bit_position": 64,
+                    "checked": false
+                },
+                {
+                    "name": "Qwertz",
+                    "id": "62",
+                    "value": "3",
+                    "bit_position": 65,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "VideoChip",
+            "id": "7",
+            "options": [
+                {
+                    "name": "GeForce GTX1070",
+                    "id": "63",
+                    "value": "1",
+                    "bit_position": 66,
+                    "checked": false
+                },
+                {
+                    "name": "Intel HD Graphics",
+                    "id": "64",
+                    "value": "2",
+                    "bit_position": 67,
+                    "checked": false
+                },
+                {
+                    "name": "Intel HD Graphics 630",
+                    "id": "65",
+                    "value": "3",
+                    "bit_position": 68,
+                    "checked": false
+                },
+                {
+                    "name": "GeForce GTX1650",
+                    "id": "66",
+                    "value": "4",
+                    "bit_position": 69,
+                    "checked": false
+                },
+                {
+                    "name": "Apple M1 7",
+                    "id": "67",
+                    "value": "core",
+                    "bit_position": 70,
+                    "checked": false
+                },
+                {
+                    "name": "Apple M1 8",
+                    "id": "68",
+                    "value": "core",
+                    "bit_position": 71,
+                    "checked": false
+                },
+                {
+                    "name": "Intel UHD Graphics",
+                    "id": "69",
+                    "value": "7",
+                    "bit_position": 72,
+                    "checked": false
+                },
+                {
+                    "name": "Radeon RX vega 6",
+                    "id": "70",
+                    "value": "8",
+                    "bit_position": 73,
+                    "checked": false
+                },
+                {
+                    "name": "Radeon RX vega 8",
+                    "id": "71",
+                    "value": "9",
+                    "bit_position": 74,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "Screen Formfactor",
+            "id": "8",
+            "options": [
+                {
+                    "name": "Flat",
+                    "id": "72",
+                    "value": "1",
+                    "bit_position": 75,
+                    "checked": false
+                },
+                {
+                    "name": "Curved",
+                    "id": "73",
+                    "value": "2",
+                    "bit_position": 76,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "Pannel Type",
+            "id": "9",
+            "options": [
+                {
+                    "name": "LCD",
+                    "id": "74",
+                    "value": "1",
+                    "bit_position": 77,
+                    "checked": false
+                },
+                {
+                    "name": "OLED",
+                    "id": "75",
+                    "value": "2",
+                    "bit_position": 78,
+                    "checked": false
+                },
+                {
+                    "name": "Plasma",
+                    "id": "76",
+                    "value": "3",
+                    "bit_position": 79,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "Backlight",
+            "id": "10",
+            "options": [
+                {
+                    "name": "CCFL",
+                    "id": "77",
+                    "value": "1",
+                    "bit_position": 80,
+                    "checked": false
+                },
+                {
+                    "name": "Direct",
+                    "id": "78",
+                    "value": "Led",
+                    "bit_position": 81,
+                    "checked": false
+                },
+                {
+                    "name": "Edge",
+                    "id": "79",
+                    "value": "lit",
+                    "bit_position": 82,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "Memory",
+            "id": "11",
+            "options": [
+                {
+                    "name": "1GB",
+                    "id": "80",
+                    "value": "1",
+                    "bit_position": 83,
+                    "checked": false
+                },
+                {
+                    "name": "2GB",
+                    "id": "81",
+                    "value": "2",
+                    "bit_position": 84,
+                    "checked": false
+                },
+                {
+                    "name": "6GB",
+                    "id": "82",
+                    "value": "3",
+                    "bit_position": 85,
+                    "checked": false
+                },
+                {
+                    "name": "8GB",
+                    "id": "83",
+                    "value": "4",
+                    "bit_position": 86,
+                    "checked": false
+                },
+                {
+                    "name": "12GB",
+                    "id": "84",
+                    "value": "6",
+                    "bit_position": 87,
+                    "checked": false
+                },
+                {
+                    "name": "16GB",
+                    "id": "85",
+                    "value": "7",
+                    "bit_position": 88,
+                    "checked": false
+                },
+                {
+                    "name": "32GB",
+                    "id": "86",
+                    "value": "8",
+                    "bit_position": 89,
+                    "checked": false
+                },
+                {
+                    "name": "64GB",
+                    "id": "87",
+                    "value": "9",
+                    "bit_position": 90,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "storrage",
+            "id": "12",
+            "options": [
+                {
+                    "name": "1GB",
+                    "id": "88",
+                    "value": "1",
+                    "bit_position": 91,
+                    "checked": false
+                },
+                {
+                    "name": "4GB",
+                    "id": "89",
+                    "value": "2",
+                    "bit_position": 92,
+                    "checked": false
+                },
+                {
+                    "name": "16GB",
+                    "id": "90",
+                    "value": "3",
+                    "bit_position": 93,
+                    "checked": false
+                },
+                {
+                    "name": "32GB",
+                    "id": "91",
+                    "value": "4",
+                    "bit_position": 94,
+                    "checked": false
+                },
+                {
+                    "name": "128GB",
+                    "id": "92",
+                    "value": "5",
+                    "bit_position": 95,
+                    "checked": false
+                },
+                {
+                    "name": "256GB",
+                    "id": "93",
+                    "value": "6",
+                    "bit_position": 96,
+                    "checked": false
+                },
+                {
+                    "name": "500GB",
+                    "id": "94",
+                    "value": "7",
+                    "bit_position": 97,
+                    "checked": false
+                },
+                {
+                    "name": "1TB",
+                    "id": "95",
+                    "value": "8",
+                    "bit_position": 98,
+                    "checked": false
+                }
+            ]
+        },
+        {
+            "name": "Brand",
+            "id": "13",
+            "options": [
+                {
+                    "name": "Microsoft",
+                    "id": "96",
+                    "value": "1",
+                    "bit_position": 99,
+                    "checked": false
+                },
+                {
+                    "name": "Apple",
+                    "id": "97",
+                    "value": "2",
+                    "bit_position": 100,
+                    "checked": false
+                },
+                {
+                    "name": "Samsumg",
+                    "id": "98",
+                    "value": "3",
+                    "bit_position": 101,
+                    "checked": false
+                },
+                {
+                    "name": "Huawei",
+                    "id": "99",
+                    "value": "4",
+                    "bit_position": 102,
+                    "checked": false
+                }
+            ]
+        }
+    ],
+    "pageSize": 1,
+    "lastId": 0,
+    "searchTerm": ""
+}
