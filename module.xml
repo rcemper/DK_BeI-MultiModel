@@ -9,7 +9,6 @@
       <Resource Name="BeI.PKG"/>
       <Invokes>
         <Invoke Class="BeI.Installer" Method="Install"></Invoke>
-        </Invoke>
       </Invokes>
     </Module>
     
