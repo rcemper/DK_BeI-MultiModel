@@ -280,7 +280,7 @@ ClassMethod Counts() As %Status
         set xfilter = filterObj.filters.%Get($LIST(mapping,1))
         set xoption = xfilter.options.%Get($LIST(mapping,2))
         set filterCounts(xfilter.id)=xfilter.name
-        set filterCounts(xfilter.id,xoption.id)=$LISTBUILD(counts(i),xoption.name)
+        set filterCounts(xfilter.id,xoption.id)=$LISTBUILD($GET(counts(i),0),xoption.name)
     }
     
     set counters.filters = []
