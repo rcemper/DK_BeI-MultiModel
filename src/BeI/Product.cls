@@ -93,7 +93,7 @@ Method GetDynamicProduct(sortIndex As %String = "") As %DynamicObject
 {
     set result = {}
     set result.name = ..Name
-    set result.category = ..Category.Name
+    set result."category_name" = ..Category.Name
     set result."category_id" = ..Category.%Id()
     set result.id = ..%Id()
     //set result.bitstring = ##class(BeI.Utils).ShowBitstring(..BitString)
