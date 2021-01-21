@@ -114,7 +114,7 @@ ClassMethod BuildIndices() As %Status [ PublicList = (prod, idx) ]
             while key'="" {
                 set indir = ("idx="_order.IndexRule)
                 set @indir
-                set ^INDEX("SORTORDER",$zcvt(order.Field,"U"),idx) = prod.BitString
+                set ^INDEX("SORTORDER",$zcvt(order.Field,"U"),idx) = $lb(prod.BitString,$ZCONVERT(prod.Name,"U"))
                 set order = sorts.GetNext(.key)
             }
         }

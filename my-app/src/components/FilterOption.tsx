@@ -18,7 +18,7 @@ export function FilterOption({ filteroption,filterCallBack }: IFilterOptionProps
             {filteroption.name}
             
         </label>
-        <span className="badge bg-info mt-2 pt-2"> 328 </span>
+        <span className="badge bg-primary mt-2 pt-2"> 328 </span>
         </div>
     );
 }
