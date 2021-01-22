@@ -260,7 +260,7 @@ ClassMethod Counts() As %Status
         }
             
     }
-    if todo,searchTerm = "" {
+    if (todo) || (searchTerm '= "") {
         set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
         while index '= "" {
             set testName = $LIST(value,2), testBitstring = $LIST(value,1)
@@ -316,6 +316,7 @@ ClassMethod Counts() As %Status
         set counters.filters2 = xCounts
     }
     set counters.requestId = requestId
+    set counters.searchTerm = searchTerm
     set counters.time = $zh - start
     write counters.%ToJSON()
     return result
