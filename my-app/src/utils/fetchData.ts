@@ -1,6 +1,6 @@
-export const fetchAPI = async (endpoint:string, body:any) => {
+export const fetchAPI = async (request: Request) => {
     try {
-        const response = await fetch(endpoint,body);
+        const response = await fetch(request);
         const result=response.json();
         return result;
     } catch (error) {

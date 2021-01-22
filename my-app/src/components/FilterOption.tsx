@@ -1,11 +1,13 @@
 import React, { ChangeEvent } from "react";
 import { IFilterOption } from "../types";
+import { getFilterOptionCount } from "../utils";
 
 interface IFilterOptionProps {
     filteroption: IFilterOption;
     filterCallBack: (name: string, checked:boolean) => void;
+    filterCounts: any;
 }
-export function FilterOption({ filteroption,filterCallBack }: IFilterOptionProps) {
+export function FilterOption({ filteroption,filterCallBack, filterCounts }: IFilterOptionProps) {
     return (
         <div className="d-flex justify-content-between">
         <label className="list-group-item">
@@ -18,7 +20,7 @@ export function FilterOption({ filteroption,filterCallBack }: IFilterOptionProps
             {filteroption.name}
             
         </label>
-        <span className="badge bg-primary mt-2 pt-2"> 328 </span>
+        <span className="badge bg-primary mt-2 pt-2">{getFilterOptionCount(+filteroption.id,filterCounts)}</span>
         </div>
     );
 }

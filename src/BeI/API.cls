@@ -298,6 +298,19 @@ ClassMethod Counts() As %Status
         do counters.filters.%Push(filter)
         set filterId = $ORDER(filterCounts(filterId),1,filterName)
     }
+    set counters.filters2 =[]
+    set filterId = $ORDER(filterCounts(""),1,filterName)
+    while filterId '= "" {
+        set optionId = $ORDER(filterCounts(filterId,""),1,filterVal)
+        while optionId '= "" {
+            set option = {}
+            set option.id = optionId
+            set option.count=$LIST(filterVal,1)
+            do counters.filters2.%Push(option)
+            set optionId = $ORDER(filterCounts(filterId,optionId),1,filterVal)
+        }
+        set filterId = $ORDER(filterCounts(filterId),1,filterName)
+    }
 
     set counters.time = $zh - start
     write counters.%ToJSON()

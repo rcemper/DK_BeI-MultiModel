@@ -11,11 +11,10 @@ import { PageSize} from "./components/PageSize";
 import { IFilter, IProduct, ISortOrder } from './types';
 import {/*doesProductNameContain,*/changeFilterOptionChecked,fetchAPI} from "./utils";
 import { Helmet } from 'react-helmet-async';
-import { updatePostfix } from 'typescript';
 
 function App() {
   const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1}, pageSize: 9 });
-  const [productState,updateProductState] = useState({products: Array<IProduct>(), curPage:1,nextExists: false,resultCount: 0});
+  const [productState,updateProductState] = useState({products: Array<IProduct>(), curPage:1,nextExists: false,resultCount: 0, filterWithCounts: Array<IFilter>() });
   const [sortOrders,updateSortOrders] = useState({sortOrders: Array<ISortOrder>()});
   const pageSizes = [9,27,63];
   function onSearch(searchTerm : string) {
@@ -94,33 +93,44 @@ function App() {
         "curPage": productState.curPage
       };
       console.log(payload);
+      const fetchProducts = async() => {
+        const productResult=await fetchAPI(new Request("http://localhost:9092/BeI/products",{
+          method: 'POST', // *GET, POST, PUT, DELETE, etc.
+          mode: 'cors', // no-cors, *cors, same-origin
+          cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+          credentials: 'same-origin', // include, *same-origin, omit
+          headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          redirect: 'follow', 
+          referrerPolicy: 'no-referrer',
+          body: JSON.stringify(payload)}));
+        console.log(productResult);
+        updateProductState(prevState => {
+          return {...productState,products: productResult.products, lastID: productResult.lastId, nextExists: productResult.hasNext, resultCount: productResult.totalCount}})
+      }
+      fetchProducts();
+      const fetchCounts = async() => {
+        const countResult=await fetchAPI(new Request("http://localhost:9092/BeI/counts",{
+          method: 'POST', // *GET, POST, PUT, DELETE, etc.
+          mode: 'cors', // no-cors, *cors, same-origin
+          cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+          credentials: 'same-origin', // include, *same-origin, omit
+          headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          redirect: 'follow', 
+          referrerPolicy: 'no-referrer',
+          body: JSON.stringify(payload)}));
+        console.log(countResult);
+        
+        updateProductState(prevState => {
+          return {...prevState,filterWithCounts:countResult.filters2}})
+      }
+      fetchCounts();
 
-      fetch("http://localhost:9092/BeI/products", {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'cors', // no-cors, *cors, same-origin
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: 'same-origin', // include, *same-origin, omit
-        headers: {
-          'Content-Type': 'application/json'
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        redirect: 'follow', 
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(payload)}
-      ).then(res => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-          updateProductState(prevState => {
-            return {...productState,products: result.products, lastID: result.lastId, nextExists: result.hasNext, resultCount: result.totalCount}})
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-    
-        }
-      );
     }
   }, [state])
 
@@ -130,9 +140,9 @@ function App() {
     let newFilters: IFilter[]=Array<IFilter>();
     let newSortOrders: ISortOrder[]=Array<ISortOrder>();
     const fetchFilters = async() => {
-      const filterResult=await fetchAPI("http://localhost:9092/BeI/filters",{});
+      const filterResult=await fetchAPI(new Request("http://localhost:9092/BeI/filters"));
       newFilters=filterResult.filters;
-      const sortOrderResult = await fetchAPI("http://localhost:9092/BeI/sorts",{});
+      const sortOrderResult = await fetchAPI(new Request("http://localhost:9092/BeI/sorts"));
       newSortOrders=sortOrderResult
 
       console.log("Startup data received: ");
@@ -177,7 +187,11 @@ return (
       <div id="firstAccordion" className="col-sm-3 px-4 accordion">
         {state.filters.map(
             (filter) => (
-              <Filter key={filter.id} filter={filter} filterCallBack={filterCallBack} isFirst={filter.id===state.filters[0].id} />
+              <Filter key={filter.id} 
+                      filter={filter} 
+                      filterCallBack={filterCallBack} 
+                      isFirst={filter.id===state.filters[0].id} 
+                      filterCounts={productState.filterWithCounts} />
             )
           )}        
       </div>

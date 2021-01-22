@@ -6,8 +6,9 @@ interface IFilterProps {
     filter: IFilter;
     filterCallBack:  (name: string, checked:boolean) => void;
     isFirst: boolean;
+    filterCounts: any;
 }
-export function Filter({ filter,filterCallBack,isFirst }: IFilterProps ) {
+export function Filter({ filter,filterCallBack,isFirst,filterCounts }: IFilterProps ) {
     return (
         <div className="accordion-item">
             <h3 id={"header_"+filter.id.toString()} className="accordion-header">
@@ -18,7 +19,7 @@ export function Filter({ filter,filterCallBack,isFirst }: IFilterProps ) {
             <div id={"body_"+filter.id.toString()} className={"accordion-collapse collapse "+(isFirst ? "show" : "")}>
                 <div className="list-group accordion-body" data-bs-parent="#firstAccordion" aria-labelledby={"header_"+filter.id.toString()}>
                 {filter.options.map((filteroption) => (
-                    <FilterOption key={filteroption.id} filteroption={filteroption} filterCallBack={filterCallBack} />
+                    <FilterOption key={filteroption.id} filteroption={filteroption} filterCallBack={filterCallBack} filterCounts={filterCounts} />
                         ))
                 }
                 </div>
