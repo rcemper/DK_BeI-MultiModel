@@ -48,6 +48,7 @@ ClassMethod CategoryFilter() As %DynamicObject
         set catFilter.id = -1*i
         set catFilter.name = cat.Name
         set catFilter.value = cat.%Id()
+        set catFilter."product_count" = cat.ProductCount()
         set catFilter."bit_position" = cat.BitStringPosition
         d catFilter.%Set("checked",1,"boolean")
         do filter.options.%Push(catFilter)
@@ -80,6 +81,7 @@ ClassMethod AttributeFilters(filters As %DynamicArray, category As %Integer = ""
             set option.name = val.Name
             set option.id = val.%Id()
             set option.value = val.Value
+            set option."product_count" = val.ProductCount
             set option."bit_position" = val.BitStringPosition
             d option.%Set("checked",0,"boolean")
             do filter.options.%Push(option)
@@ -215,6 +217,7 @@ ClassMethod Counts() As %Status
                 set xopt = {}
                 set xopt.id = optionsValue.id
                 set xopt.count=optionsValue."product_count"
+                d xCounts.%Push(xopt)
                 if optionsValue.checked {
                     s foundOne=foundOne + 1
                 }
@@ -310,7 +313,7 @@ ClassMethod Counts() As %Status
         }
     }
     else {
-        set counters.filter2 = xCounts
+        set counters.filters2 = xCounts
     }
     set counters.requestId = requestId
     set counters.time = $zh - start

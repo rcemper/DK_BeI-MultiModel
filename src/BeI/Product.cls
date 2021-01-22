@@ -11,6 +11,9 @@ Property BitString As %String(POPORDER = 4);
 
 Property Attributes As array Of BeI.AttributeValue(POPORDER = 5, POPSPEC = ".PopulateAttributes()");
 
+/// cat index
+Index idxCategory On Category;
+
 ClassMethod GetProductsByCategoryId(categoryId As %String) As %ArrayOfObjects
 {
     set result = ##class(%ArrayOfObjects).%New(),i = 0

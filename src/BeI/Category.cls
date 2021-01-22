@@ -7,6 +7,14 @@ Property Attributes As array Of BeI.Attribute;
 
 Property BitStringPosition As %Numeric;
 
+Method ProductCount() As %Numeric
+{
+    set id = ..%Id()
+    set count = 0
+    &SQL(SELECT count(id) into:count FROM BeI.Product WHERE Category=:id)
+    return count
+}
+
 ClassMethod GetAllCategories() As %Library.ArrayOfObjects
 {
     set result = ##class(%ArrayOfObjects).%New(),i = 0
