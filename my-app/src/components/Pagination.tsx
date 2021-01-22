@@ -31,10 +31,10 @@ export function Pagination({curPage, lastPage, paginationCallback}: IPaginationP
             <li className="page-item"><a className="page-link" href="#" onClick={(event) => linkClick(event,curPage-1)}>{curPage-1}</a></li>
             }
             <li className="page-item active"><a className="page-link" href="#" onClick={(event) => event.preventDefault()}>{curPage}</a></li>
-            {(curPage<lastPage) &&
+            {(curPage<lastPage-1) &&
             <li className="page-item"><a className="page-link" href="#" onClick={(event) => linkClick(event,curPage+1)}>{curPage+1}</a></li>
             }
-            {(curPage<(lastPage+1)) &&
+            {(curPage<(lastPage-1)) &&
             <li className="page-item disabled"><a className="page-link" href="#">...</a></li>
             }
             {(curPage<lastPage) &&
