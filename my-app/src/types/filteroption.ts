@@ -4,4 +4,5 @@ export interface IFilterOption {
     value: number;
     checked: boolean;
     bit_position: number;
+    product_count: number;
 }
