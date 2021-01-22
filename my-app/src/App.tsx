@@ -15,6 +15,7 @@ import { Helmet } from 'react-helmet-async';
 function App() {
   const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1}, pageSize: 9 });
   const [productState,updateProductState] = useState({products: Array<IProduct>(), curPage:1,nextExists: false,resultCount: 0, filterWithCounts: Array<IFilter>() });
+  const [requestState,updateRequestState] = useState({productRequestID:0,countRequestID:0});
   const [sortOrders,updateSortOrders] = useState({sortOrders: Array<ISortOrder>()});
   const pageSizes = [9,27,63];
   function onSearch(searchTerm : string) {
@@ -90,7 +91,8 @@ function App() {
         "pageSize": state.pageSize,
         "pageDirection": state.pageDirection,
         "searchTerm": state.searchTerm,
-        "curPage": productState.curPage
+        "curPage": productState.curPage,
+        "requestId": requestState.productRequestID
       };
       console.log(payload);
       const fetchProducts = async() => {
@@ -107,9 +109,12 @@ function App() {
           referrerPolicy: 'no-referrer',
           body: JSON.stringify(payload)}));
         console.log(productResult);
-        updateProductState(prevState => {
-          return {...productState,products: productResult.products, lastID: productResult.lastId, nextExists: productResult.hasNext, resultCount: productResult.totalCount}})
+        if (productResult.requestId===requestState.productRequestID) {
+          updateProductState(prevState => {
+            return {...productState,products: productResult.products, lastID: productResult.lastId, nextExists: productResult.hasNext, resultCount: productResult.totalCount}})
+        }
       }
+      payload.requestId=requestState.countRequestID
       fetchProducts();
       const fetchCounts = async() => {
         const countResult=await fetchAPI(new Request("http://localhost:9092/BeI/counts",{
@@ -125,9 +130,9 @@ function App() {
           referrerPolicy: 'no-referrer',
           body: JSON.stringify(payload)}));
         console.log(countResult);
-        
-        updateProductState(prevState => {
-          return {...prevState,filterWithCounts:countResult.filters2}})
+        if (countResult.requestId===requestState.productRequestID) {
+          updateProductState(prevState => {
+            return {...prevState,filterWithCounts:countResult.filters2}})
       }
       fetchCounts();
 
@@ -208,7 +213,7 @@ return (
           ) : <div>No products found.</div>  
         }
         {productState.products?.length>0 ?
-        <Pagination curPage={productState.curPage} nextExists={productState.nextExists} paginationCallback={paginationCallback}/>
+        <Pagination curPage={productState.curPage} lastPage={Math.floor(productState.resultCount/state.pageSize)} paginationCallback={paginationCallback}/>
         : ""}
         </div>
       </div>

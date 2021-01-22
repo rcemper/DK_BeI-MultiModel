@@ -2,11 +2,11 @@ import React from "react";
 
 interface IPaginationProps {
     curPage: number;
-    nextExists: boolean;
+    lastPage: number;
     paginationCallback: (clickedPage: number, curPage: number) => void
 }
  // er moet nog een callback komen
-export function Pagination({curPage, nextExists, paginationCallback}: IPaginationProps) {
+export function Pagination({curPage, lastPage, paginationCallback}: IPaginationProps) {
     function linkClick(event: React.MouseEvent<HTMLAnchorElement,MouseEvent>, clickedPage: number) {
         event.preventDefault();
         paginationCallback(clickedPage,curPage);
@@ -31,13 +31,16 @@ export function Pagination({curPage, nextExists, paginationCallback}: IPaginatio
             <li className="page-item"><a className="page-link" href="#" onClick={(event) => linkClick(event,curPage-1)}>{curPage-1}</a></li>
             }
             <li className="page-item active"><a className="page-link" href="#" onClick={(event) => event.preventDefault()}>{curPage}</a></li>
-            {(nextExists) &&
+            {(curPage<lastPage) &&
             <li className="page-item"><a className="page-link" href="#" onClick={(event) => linkClick(event,curPage+1)}>{curPage+1}</a></li>
             }
-            {(nextExists) &&
+            {(curPage<(lastPage+1)) &&
             <li className="page-item disabled"><a className="page-link" href="#">...</a></li>
             }
-            {(nextExists) &&
+            {(curPage<lastPage) &&
+            <li className="page-item"><a className="page-link" href="#" onClick={(event) => linkClick(event,lastPage)}>{lastPage}</a></li>
+            }
+            {(curPage<lastPage) &&
             <li className="page-item">
             <a className="page-link" href="#" aria-label="Next" onClick={(event) => linkClick(event,curPage+1)}>
                 <span aria-hidden="true">&raquo;</span>
