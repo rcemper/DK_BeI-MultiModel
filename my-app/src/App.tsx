@@ -15,7 +15,7 @@ import { updatePostfix } from 'typescript';
 
 function App() {
   const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1}, pageSize: 9 });
-  const [productState,updateProductState] = useState({products: Array<IProduct>(), curPage:1,nextExists: false});
+  const [productState,updateProductState] = useState({products: Array<IProduct>(), curPage:1,nextExists: false,resultCount: 0});
   const [sortOrders,updateSortOrders] = useState({sortOrders: Array<ISortOrder>()});
   const pageSizes = [9,27,63];
   function onSearch(searchTerm : string) {
@@ -90,7 +90,8 @@ function App() {
         "sort": state.selectedSortOrder,
         "pageSize": state.pageSize,
         "pageDirection": state.pageDirection,
-        "searchTerm": state.searchTerm
+        "searchTerm": state.searchTerm,
+        "curPage": productState.curPage
       };
       console.log(payload);
 
@@ -111,7 +112,7 @@ function App() {
         (result) => {
           console.log(result);
           updateProductState(prevState => {
-            return {...productState,products: result.products, lastID: result.lastId, nextExists: result.hasNext}})
+            return {...productState,products: result.products, lastID: result.lastId, nextExists: result.hasNext, resultCount: result.totalCount}})
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -162,6 +163,7 @@ return (
   <div className="container--xxl px-4">
     <div className="d-flex justify-content-between bg-white align-items-center"> 
       <span className="font-weight-bold text-uppercase">Product list</span>
+      <span className="font-weight-bold text-uppercase">{productState.resultCount} results</span>
       <div>
         <div className="text d-flex">Items per page
         <PageSize pageSizes={pageSizes} pageSizeCallBack={pageSizeCallBack}/>
