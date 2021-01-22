@@ -329,34 +329,23 @@ ClassMethod Products() As %Status
     set result.products = []
     set filter = ##class(BeI.API).GetFilter()
     set result.filter = ##class(BeI.Utils).ShowBitstring(filter.bitstring)
-    set count = 0,hasNext = 0
+    set count = 0
     set sortField=$ZCONVERT(filter.sort.field,"U")
-    set index = $ORDER(^INDEX("SORTORDER",sortField,""),filter.sort.direction*filter.pageDirection.direction,value)
+    set index = $ORDER(^INDEX("SORTORDER",sortField,""),1,value)
     while index '= "" {
         set testName = $LIST(value,2), testBitstring = $LIST(value,1),bitcount = $BITCOUNT(testBitstring)
         if ##class(BeI.API).TestFilter(filter.bitstring,testBitstring) {
             if (filter.searchTerm = "") || (testName [ filter.searchTerm)  {
-                if count > (filter.pageSize * (filter.currentpage-1)),count<=(filter.pageSize * (filter.currentpage)) {
-                //if count < filter.pageSize {                    
+                if count > (filter.pageSize * (filter.curPage-1)),count<=(filter.pageSize * (filter.curPage)) {
                     set oProd=##class(BeI.API).GetProductFromIndex(index) 
-                    if filter.pageDirection.direction > 0 {
-                        do result.products.%Push(oProd)
-                    }
-                    else {
-                        do result.products.%Set(filter.pageSize-count-1,oProd)
-                    }
+                    do result.products.%Push(oProd)
                 } 
-                /*for i=1:1:bitcount {
-                    s counts(i)=$GET(counts(i))+$BIT(testBitstring,i)
-                }*/
                 set count = count + 1
-                if count > filter.pageSize { set hasNext = 1 }
            }
         }
-        set index = $ORDER(^INDEX("SORTORDER",sortField,index),filter.sort.direction*filter.pageDirection.direction,value)
+        set index = $ORDER(^INDEX("SORTORDER",sortField,index),1,value)
     }
     set result.totalCount = count
-    do result.%Set("hasNext",hasNext,"boolean")
     set result.requestId = filter.requestId
     set result.time = $zh - start
     write result.%ToJSON()
