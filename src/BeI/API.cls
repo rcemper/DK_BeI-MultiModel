@@ -129,8 +129,9 @@ ClassMethod GetFilter() As %DynamicObject [ PublicList = %request ]
     set filter = {},bitstring = ""
     set filter.searchTerm = ""
     set filter.pageSize = 5
-    set filter.currentpage = 1
+    set filter.curPage = 1
     set filter.lastId = ""
+    set filter.requestId = ""
     set filter.sort = {"field": "id","direction":1 }
     set len = ##class(BeI.Agent).GetLastBitstringPosition()
     for i = 1:1:len {
@@ -142,6 +143,8 @@ ClassMethod GetFilter() As %DynamicObject [ PublicList = %request ]
         if filterObj.pageSize '= "" { set filter.pageSize = filterObj.pageSize }
         if filterObj.pageDirection '= "" { set filter.pageDirection = filterObj.pageDirection }
         if filterObj.sort '= "" { set filter.sort = filterObj.sort }
+        if filterObj.curPage '= "" { set filter.curPage = filterObj.curPage }
+        if filterObj.requestId '= "" { set filter.requestId = filterObj.requestId }
         set filterIter = filterObj.filters.%GetIterator()
         while filterIter.%GetNext(.key,.filtervalue) {
             set optionsIter = filtervalue.options.%GetIterator()
@@ -188,6 +191,7 @@ ClassMethod Counts() As %Status
     set result = $$$OK
     set bitstring = ""
     set searchTerm = ""
+    set requestId = 0
     set counters = {}
     set start = $zh
     set len = ##class(BeI.Agent).GetLastBitstringPosition()
@@ -196,6 +200,7 @@ ClassMethod Counts() As %Status
     }
     if %request.Content {
         set filterObj = {}.%FromJSON(%request.Content)
+        set requestId = filterObj.requestId
         set searchTerm = $ZCONVERT(filterObj.searchTerm,"U")
         set filterIter = filterObj.filters.%GetIterator()
         set todo = 0
@@ -311,7 +316,7 @@ ClassMethod Counts() As %Status
         }
         set filterId = $ORDER(filterCounts(filterId),1,filterName)
     }
-
+    set counters.requestId = requestId
     set counters.time = $zh - start
     write counters.%ToJSON()
     return result
@@ -326,14 +331,13 @@ ClassMethod Products() As %Status
     set result.filter = ##class(BeI.Utils).ShowBitstring(filter.bitstring)
     set count = 0,hasNext = 0
     set sortField=$ZCONVERT(filter.sort.field,"U")
-    set index = $ORDER(^INDEX("SORTORDER",sortField,filter.pageDirection.id),filter.sort.direction*filter.pageDirection.direction,value)
+    set index = $ORDER(^INDEX("SORTORDER",sortField,""),filter.sort.direction*filter.pageDirection.direction,value)
     while index '= "" {
         set testName = $LIST(value,2), testBitstring = $LIST(value,1),bitcount = $BITCOUNT(testBitstring)
         if ##class(BeI.API).TestFilter(filter.bitstring,testBitstring) {
             if (filter.searchTerm = "") || (testName [ filter.searchTerm)  {
-                //if count > (filter.pageSize * (filter.currentpage-1)),count<=(filter.pageSize * (filter.currentpage)) {
-                if count < filter.pageSize {
-                    
+                if count > (filter.pageSize * (filter.currentpage-1)),count<=(filter.pageSize * (filter.currentpage)) {
+                //if count < filter.pageSize {                    
                     set oProd=##class(BeI.API).GetProductFromIndex(index) 
                     if filter.pageDirection.direction > 0 {
                         do result.products.%Push(oProd)
@@ -353,6 +357,7 @@ ClassMethod Products() As %Status
     }
     set result.totalCount = count
     do result.%Set("hasNext",hasNext,"boolean")
+    set result.requestId = filter.requestId
     set result.time = $zh - start
     write result.%ToJSON()
     return $$$OK
