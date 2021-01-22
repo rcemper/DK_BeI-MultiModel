@@ -193,17 +193,18 @@ ClassMethod Counts() As %Status
     set searchTerm = ""
     set requestId = 0
     set counters = {}
+    set xCounts = []
     set start = $zh
     set len = ##class(BeI.Agent).GetLastBitstringPosition()
     for i = 1:1:len {
         set $BIT(bitstring, i) = 1
     }
+    set todo = 0
     if %request.Content {
         set filterObj = {}.%FromJSON(%request.Content)
         set requestId = filterObj.requestId
         set searchTerm = $ZCONVERT(filterObj.searchTerm,"U")
         set filterIter = filterObj.filters.%GetIterator()
-        set todo = 0
         while filterIter.%GetNext(.key,.filtervalue) {
             set optionsIter = filtervalue.options.%GetIterator()
             set positions = "" , pos = 1, optionKeys = ""
@@ -211,6 +212,9 @@ ClassMethod Counts() As %Status
             s foundOne=0,countOptions=0
             while optionsIter.%GetNext(.optionsKey,.optionsValue){
                 set map(optionsValue."bit_position")=$lb(key,optionsKey)
+                set xopt = {}
+                set xopt.id = optionsValue.id
+                set xopt.count=optionsValue."product_count"
                 if optionsValue.checked {
                     s foundOne=foundOne + 1
                 }
@@ -253,68 +257,60 @@ ClassMethod Counts() As %Status
         }
             
     }
-    set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
-    while index '= "" {
-        set testName = $LIST(value,2), testBitstring = $LIST(value,1)
-        if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
-            if (searchTerm = "") || (testName [ searchTerm)  {
-                for i=1:1:len {
-                    set counts(i) = $GET(counts(i)) + $BIT(testBitstring,i)
-                }
-           }
-        }
-        else {
-            set fKey = $ORDER(tests(""))
-            while fKey '= "" {
-                set oKey = $ORDER(tests(fKey,""),1,value)
-                while oKey '= "" {
-                    if ##class(BeI.API).TestFilter(value,testBitstring) {
-                        set idx = filterObj.filters.%Get(fKey).options.%Get(oKey)."bit_position"
-                        set counts(idx)=$GET(counts(idx)) + 1
+    if todo {
+        set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
+        while index '= "" {
+            set testName = $LIST(value,2), testBitstring = $LIST(value,1)
+            if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
+                if (searchTerm = "") || (testName [ searchTerm)  {
+                    for i=1:1:len {
+                        set counts(i) = $GET(counts(i)) + $BIT(testBitstring,i)
                     }
-                    set oKey = $ORDER(tests(fKey,oKey),1,value)
-                }
-                set fKey = $ORDER(tests(fKey))
+               }
             }
+            else {
+                set fKey = $ORDER(tests(""))
+                while fKey '= "" {
+                    set oKey = $ORDER(tests(fKey,""),1,value)
+                    while oKey '= "" {
+                        if ##class(BeI.API).TestFilter(value,testBitstring) {
+                            if (searchTerm = "") || (testName [ searchTerm)  {
+                                set idx = filterObj.filters.%Get(fKey).options.%Get(oKey)."bit_position"
+                                set counts(idx)=$GET(counts(idx)) + 1
+                            }
+                        }
+                        set oKey = $ORDER(tests(fKey,oKey),1,value)
+                    }
+                    set fKey = $ORDER(tests(fKey))
+                }
+            }
+            set index = $ORDER(^INDEX("SORTORDER","ID",index),1,value)
         }
-        set index = $ORDER(^INDEX("SORTORDER","ID",index),1,value)
-    }
 
-    for i=1:1:len {
-        set mapping = map(i)
-        set xfilter = filterObj.filters.%Get($LIST(mapping,1))
-        set xoption = xfilter.options.%Get($LIST(mapping,2))
-        set filterCounts(xfilter.id)=xfilter.name
-        set filterCounts(xfilter.id,xoption.id)=$LISTBUILD($GET(counts(i),0),xoption.name)
-    }
+        for i=1:1:len {
+            set mapping = map(i)
+            set xfilter = filterObj.filters.%Get($LIST(mapping,1))
+            set xoption = xfilter.options.%Get($LIST(mapping,2))
+            set filterCounts(xfilter.id)=xfilter.name
+            set filterCounts(xfilter.id,xoption.id)=$LISTBUILD($GET(counts(i),0),xoption.name)
+        }
     
-    set counters.filters = []
-    set filterId = $ORDER(filterCounts(""),1,filterName)
-    while filterId '= "" {
-        set filter = {}
-        set filter.id = filterId,filter.name = filterName,filter.options = []
-        set optionId = $ORDER(filterCounts(filterId,""),1,filterVal)
-        while optionId '= "" {
-            set option = {}
-            set option.id = optionId,option.name = $LIST(filterVal,2),option.count=$LIST(filterVal,1)
-            do filter.options.%Push(option)
-            set optionId = $ORDER(filterCounts(filterId,optionId),1,filterVal)
+        set counters.filters2 =[]
+        set filterId = $ORDER(filterCounts(""),1,filterName)
+        while filterId '= "" {
+            set optionId = $ORDER(filterCounts(filterId,""),1,filterVal)
+            while optionId '= "" {
+                set option = {}
+                set option.id = optionId
+                set option.count=$LIST(filterVal,1)
+                do counters.filters2.%Push(option)
+                set optionId = $ORDER(filterCounts(filterId,optionId),1,filterVal)
+            }
+            set filterId = $ORDER(filterCounts(filterId),1,filterName)
         }
-        do counters.filters.%Push(filter)
-        set filterId = $ORDER(filterCounts(filterId),1,filterName)
     }
-    set counters.filters2 =[]
-    set filterId = $ORDER(filterCounts(""),1,filterName)
-    while filterId '= "" {
-        set optionId = $ORDER(filterCounts(filterId,""),1,filterVal)
-        while optionId '= "" {
-            set option = {}
-            set option.id = optionId
-            set option.count=$LIST(filterVal,1)
-            do counters.filters2.%Push(option)
-            set optionId = $ORDER(filterCounts(filterId,optionId),1,filterVal)
-        }
-        set filterId = $ORDER(filterCounts(filterId),1,filterName)
+    else {
+        set counters.filter2 = xCounts
     }
     set counters.requestId = requestId
     set counters.time = $zh - start

@@ -33,6 +33,7 @@ Method GetDynamicAttributeValue() As %DynamicObject
     set result.attribute = ..Attribute.Name
     set result.name = ..Name
     set result.value = ..Value
+    set result."product_count" = ..ProductCount
     set result.id=..%Id()
     return result
 }
