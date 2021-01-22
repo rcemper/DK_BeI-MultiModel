@@ -17,7 +17,7 @@ function App() {
   const [productState,updateProductState] = useState({products: Array<IProduct>(), curPage:1,nextExists: false,resultCount: 0, filterWithCounts: Array<IFilter>() });
   const [requestState,updateRequestState] = useState({productRequestID:0,countRequestID:0});
   const [sortOrders,updateSortOrders] = useState({sortOrders: Array<ISortOrder>()});
-  const pageSizes = [9,27,63];
+  const pageSizes = [15,30,60];
   function onSearch(searchTerm : string) {
     /*
     const newProducts: IProduct[] = products.filter((product) =>
