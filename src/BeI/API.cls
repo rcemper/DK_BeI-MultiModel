@@ -253,12 +253,12 @@ ClassMethod Counts() As %Status
         }
             
     }
-    set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value),bitcount = $BITCOUNT(bitstring)
+    set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
     while index '= "" {
         set testName = $LIST(value,2), testBitstring = $LIST(value,1)
         if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
             if (searchTerm = "") || (testName [ searchTerm)  {
-                for i=1:1:bitcount {
+                for i=1:1:len {
                     set counts(i) = $GET(counts(i)) + $BIT(testBitstring,i)
                 }
            }
@@ -280,7 +280,7 @@ ClassMethod Counts() As %Status
         set index = $ORDER(^INDEX("SORTORDER","ID",index),1,value)
     }
 
-    for i=1:1:bitcount {
+    for i=1:1:len {
         set mapping = map(i)
         set xfilter = filterObj.filters.%Get($LIST(mapping,1))
         set xoption = xfilter.options.%Get($LIST(mapping,2))
