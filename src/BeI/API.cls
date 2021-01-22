@@ -260,7 +260,7 @@ ClassMethod Counts() As %Status
         }
             
     }
-    if todo {
+    if todo,searchTerm = "" {
         set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
         while index '= "" {
             set testName = $LIST(value,2), testBitstring = $LIST(value,1)
