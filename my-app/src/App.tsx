@@ -85,6 +85,8 @@ function App() {
   useEffect(() => {
     if (state.filters.length && state.selectedSortOrder?.field!=="") { 
       console.log("state changed");
+      //updateRequestState(prevState => { 
+      //  return {...prevState, productRequestID: prevState.productRequestID+1}});
       let payload = {
         "filters":state.filters,
         "sort": state.selectedSortOrder,
@@ -133,6 +135,7 @@ function App() {
         if (countResult.requestId===requestState.productRequestID) {
           updateProductState(prevState => {
             return {...prevState,filterWithCounts:countResult.filters2}})
+          }
       }
       fetchCounts();
 
