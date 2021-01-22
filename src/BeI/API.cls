@@ -336,7 +336,7 @@ ClassMethod Products() As %Status
         set testName = $LIST(value,2), testBitstring = $LIST(value,1),bitcount = $BITCOUNT(testBitstring)
         if ##class(BeI.API).TestFilter(filter.bitstring,testBitstring) {
             if (filter.searchTerm = "") || (testName [ filter.searchTerm)  {
-                if count > (filter.pageSize * (filter.curPage-1)),count<=(filter.pageSize * (filter.curPage)) {
+                if count >= (filter.pageSize * (filter.curPage-1)),count<(filter.pageSize * (filter.curPage)) {
                     set oProd=##class(BeI.API).GetProductFromIndex(index) 
                     do result.products.%Push(oProd)
                 } 
