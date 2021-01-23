@@ -77,3 +77,9 @@ in the root directory
 
       npm install
       npm run watch
+
+
+## Improvements to make
+
+* Faster filter count speed
+* Splitting source data from the filter so the product is easier usable in other projects

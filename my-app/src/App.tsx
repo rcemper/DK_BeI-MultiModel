@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { Header } from "./components/Header";
 import { Product } from "./components/Product";
@@ -13,11 +13,13 @@ import {/*doesProductNameContain,*/changeFilterOptionChecked,fetchAPI} from "./u
 import { Helmet } from 'react-helmet-async';
 
 function App() {
-  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1}, pageSize: 15 });
-  const [productState,updateProductState] = useState({products: Array<IProduct>(), curPage:1,nextExists: false,resultCount: 0, filterWithCounts: Array<IFilter>() });
-  const [requestState,updateRequestState] = useState({productRequestID:0,countRequestID:0});
+  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), curPage:1, selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1}, pageSize: 15 });
+  const [productState,updateProductState] = useState({products: Array<IProduct>(), nextExists: false,resultCount: 0, filterWithCounts: Array<IFilter>() });
   const [sortOrders,updateSortOrders] = useState({sortOrders: Array<ISortOrder>()});
   const pageSizes = [15,30,60];
+
+  let productRequestID=useRef(0);
+  let filterCountID=useRef(0);
   function onSearch(searchTerm : string) {
     /*
     const newProducts: IProduct[] = products.filter((product) =>
@@ -27,10 +29,12 @@ function App() {
     updateState(prevState => {
       return {...prevState, searchTerm: newSearchTerm}});
   }
+
+  /*
   function topFunction() {
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-  }
+  }*/
   
 
   function filterCallBack(name:string, checked: boolean) {
@@ -53,48 +57,41 @@ function App() {
       lastID=productState.products[0].sort_index
       direction=-1
     }
-    updateProductState(prevState => {
-      return {...prevState, curPage: clickedPage}})
     updateState(prevState => {
-      return {...prevState, pageDirection: {id: lastID,direction:direction}}});
+      return {...prevState, curPage: clickedPage, pageDirection: {id: lastID,direction:direction}}});
     //topFunction();
   }
 
   function sortOrderCallBack(id:string) {
     updateState(prevState => {
-      return {...prevState, selectedSortOrder:
+      return {...prevState, curPage:1, selectedSortOrder:
         {
           field:id.split("_")[0],
           direction:Number(id.split("_")[1])
         },pageDirection:  {id:"",direction: prevState.pageDirection.direction}
       }
     });
-    updateProductState(prevState => { 
-      return {...prevState, curPage:1}});
   }
 
   function pageSizeCallBack(size:number) {
     updateState(prevState => {
-      return {...prevState, pageSize: size,pageDirection:  {id:"",direction: prevState.pageDirection.direction}
+      return {...prevState, curPage:1, pageSize: size,pageDirection:  {id:"",direction: prevState.pageDirection.direction}
       }
     });
-    updateProductState(prevState => { 
-      return {...prevState, curPage:1}});
   }
 
   useEffect(() => {
     if (state.filters.length && state.selectedSortOrder?.field!=="") { 
-      console.log("state changed");
-      //updateRequestState(prevState => { 
-      //  return {...prevState, productRequestID: prevState.productRequestID+1}});
+      //console.log("state changed");
+      productRequestID.current+=1
       let payload = {
         "filters":state.filters,
         "sort": state.selectedSortOrder,
         "pageSize": state.pageSize,
         "pageDirection": state.pageDirection,
         "searchTerm": state.searchTerm,
-        "curPage": productState.curPage,
-        "requestId": requestState.productRequestID
+        "curPage": state.curPage,
+        "requestId": productRequestID.current
       };
       console.log(payload);
       const fetchProducts = async() => {
@@ -111,12 +108,15 @@ function App() {
           referrerPolicy: 'no-referrer',
           body: JSON.stringify(payload)}));
         console.log(productResult);
-        if (productResult.requestId===requestState.productRequestID) {
+        if (productResult.requestId===productRequestID.current) {
           updateProductState(prevState => {
             return {...prevState,products: productResult.products, lastID: productResult.lastId, nextExists: productResult.hasNext, resultCount: productResult.totalCount}})
+        } else {
+          console.log("not using products result: "+productResult.requestId)
         }
       }
-      payload.requestId=requestState.countRequestID
+      filterCountID.current+=1;
+      payload.requestId=filterCountID.current
       fetchProducts();
       const fetchCounts = async() => {
         const countResult=await fetchAPI(new Request("http://localhost:9092/BeI/counts",{
@@ -132,9 +132,11 @@ function App() {
           referrerPolicy: 'no-referrer',
           body: JSON.stringify(payload)}));
         console.log(countResult);
-        if (countResult.requestId===requestState.productRequestID) {
+        if (countResult.requestId===filterCountID.current) {
           updateProductState(prevState => {
             return {...prevState,filterWithCounts:countResult.filters2}})
+          } else {
+            console.log("not using counts result: "+countResult.requestId)
           }
       }
       fetchCounts();
@@ -144,7 +146,7 @@ function App() {
 
   useEffect(() => {
     // code to run on component mount
-    console.log("requesting startup data: ");
+    //console.log("requesting startup data: ");
     let newFilters: IFilter[]=Array<IFilter>();
     let newSortOrders: ISortOrder[]=Array<ISortOrder>();
     const fetchFilters = async() => {
@@ -153,7 +155,7 @@ function App() {
       const sortOrderResult = await fetchAPI(new Request("http://localhost:9092/BeI/sorts"));
       newSortOrders=sortOrderResult
 
-      console.log("Startup data received: ");
+      //console.log("Startup data received: ");
       updateSortOrders(prevState => {
         return {...prevState, sortOrders:newSortOrders}});
       updateState(prevState => {
@@ -216,7 +218,7 @@ return (
           ) : <div>No products found.</div>  
         }
         {productState.products?.length>0 ?
-        <Pagination curPage={productState.curPage} lastPage={Math.floor(productState.resultCount/state.pageSize)} paginationCallback={paginationCallback}/>
+        <Pagination curPage={state.curPage} lastPage={Math.floor(productState.resultCount/state.pageSize)} paginationCallback={paginationCallback}/>
         : ""}
         </div>
       </div>
