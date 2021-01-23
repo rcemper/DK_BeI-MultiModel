@@ -30,7 +30,7 @@ To setup this code follow these steps:
    ```
    next check out the 1.1.0 release
    ```
-   gt checkout R_1.1.0
+   git checkout R_1.1.0
    ```
 2. Create a folder "files" under the root directory of the repo you just cloned 
    ``` 
