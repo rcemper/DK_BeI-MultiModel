@@ -238,6 +238,7 @@ ClassMethod Counts() As %Status
                 //bijhouden of filters getest moeten worden
                 set todo = todo + 1
             }
+            // misschien hier als foundOne gelijk is aan countOptions zorgen dat het niet apart maar in groep geteld wordt
             merge todo2 = foundOne
             set todo2 = todo2 + 1
         }
@@ -261,7 +262,7 @@ ClassMethod Counts() As %Status
     if (todo) || (searchTerm '= "") {
         set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
         while index '= "" {
-            set fKey = $ORDER(tests2(""),1,bitstring)
+            set fKey = $ORDER(tests2(""),1,bitstring) // Test some bitstrings, but not all, some things are better tested at the 
             while fKey '= "" {     
                 set testName = $LIST(value,2), testBitstring = $LIST(value,1)
                 if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
