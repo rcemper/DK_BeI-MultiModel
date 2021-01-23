@@ -10,6 +10,11 @@ We've used a IRIS backend that is called via a REST-API from a react frontend ap
 As a test we've tried this on 1.000.001 products with about 100 filter posibilities.
 forcing a product to be the last entry and specifying a filter that would only match the last entry took 0.6 seconds to yield the result.
 
+## ZPM  
+The code for this application can be installed through ZMP. This will install all the classes needed and will run a seed command to seed a demo database containing 100000 records.
+
+Attention: The react front-end app is not included in the ZPM package.
+
 ## Dependencies
 This project has some dependencies:
    * Node
@@ -22,6 +27,10 @@ To setup this code follow these steps:
 1. clone the repository to a folder on your computer
    ``` 
    git clone https://github.com/ivove/BeI-MultiModel.git
+   ```
+   next check out the 1.1.0 release
+   ```
+   git checkout R_1.1.0
    ```
 2. Create a folder "files" under the root directory of the repo you just cloned 
    ``` 
@@ -55,15 +64,15 @@ this should start a webserver listening on port 3000 and automaticly opening a b
 
 The following image briefly shows the interface. With the posibility to 
 * filter on some filters (for exemple screen size)
-   ![demo-filter](https://raw.githubusercontent.com/ivove/BeI-MultiModel/main/images/demo-filter.gif)
+   ![demo-filter](https://raw.githubusercontent.com/ivove/BeI-MultiModel/R_1.1.0/images/demo-filter.gif)
 * search on the name
-   ![demo-search](https://raw.githubusercontent.com/ivove/BeI-MultiModel/main/images/demo-search.gif)   
+   ![demo-search](https://raw.githubusercontent.com/ivove/BeI-MultiModel/R_1.1.0/images/demo-search.gif)   
 * change the sortorder
-   ![demo-sort](https://raw.githubusercontent.com/ivove/BeI-MultiModel/main/images/demo-sort.gif)
+   ![demo-sort](https://raw.githubusercontent.com/ivove/BeI-MultiModel/R_1.1.0/images/demo-sort.gif)
 * use the pageing to change the page
-   ![demo](https://raw.githubusercontent.com/ivove/BeI-MultiModel/main/images/demo-page.gif)
+   ![demo](https://raw.githubusercontent.com/ivove/BeI-MultiModel/R_1.1.0/images/demo-page.gif)
 * setting the page size
-   ![demo](https://raw.githubusercontent.com/ivove/BeI-MultiModel/main/images/demo-pagesize.gif)
+   ![demo](https://raw.githubusercontent.com/ivove/BeI-MultiModel/R_1.1.0/images/demo-pagesize.gif)
 
 
 ## Something extra: running the watcher for cls

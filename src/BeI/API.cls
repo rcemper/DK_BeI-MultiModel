@@ -147,9 +147,14 @@ ClassMethod GetFilter() As %DynamicObject [ PublicList = %request ]
         if filterObj.sort '= "" { set filter.sort = filterObj.sort }
         if filterObj.curPage '= "" { set filter.curPage = filterObj.curPage }
         if filterObj.requestId '= "" { set filter.requestId = filterObj.requestId }
+        set filter.usedFilters = ""
+        set usedFilters = ""
         set filterIter = filterObj.filters.%GetIterator()
         while filterIter.%GetNext(.key,.filtervalue) {
             set optionsIter = filtervalue.options.%GetIterator()
+            if filtervalue.id>0 {
+                set $BIT(usedFilters,filtervalue.id) = 0
+            }
             s foundOne=0
             while 'foundOne && optionsIter.%GetNext(.optionsKey,.optionsValue){
                 if optionsValue.checked {
@@ -157,14 +162,19 @@ ClassMethod GetFilter() As %DynamicObject [ PublicList = %request ]
                 }
             }
             if foundOne {
-                set optionsIter = filtervalue.options.%GetIterator()
+                set optionsIter = filtervalue.options.%GetIterator(),used = 0
                 while optionsIter.%GetNext(.optionsKey,.optionsValue){
                     if optionsValue.checked = 0 {
                         set $BIT(bitstring,optionsValue."bit_position") = 0
+                        set used =  1
                     }
+                }
+                if used,filtervalue.id>0 {
+                    set $BIT(usedFilters,filtervalue.id) = 1
                 }
             }
         }
+        set filter.usedFilters = usedFilters
     }
     set filter.bitstring = bitstring
     return filter
@@ -205,10 +215,14 @@ ClassMethod Counts() As %Status
     s todo2 =0,todo2counter=0
     if %request.Content {
         set filterObj = {}.%FromJSON(%request.Content)
+        set usedFilters = ""
         set requestId = filterObj.requestId
         set searchTerm = $ZCONVERT(filterObj.searchTerm,"U")
         set filterIter = filterObj.filters.%GetIterator()
-        while filterIter.%GetNext(.key,.filtervalue) {
+        while filterIter.%GetNext(.key,.filtervalue) { 
+            if filtervalue.id>0 {
+                set $BIT(usedFilters,filtervalue.id) = 0
+            }
             set optionsIter = filtervalue.options.%GetIterator()
             set positions = "" , pos = 1, optionKeys = ""
             k foundOne
@@ -226,14 +240,18 @@ ClassMethod Counts() As %Status
                 set foundOne(key,optionsKey) = optionsValue."bit_position"
             }
             // building the normal filter bitstring
-            set optionsIter = filtervalue.options.%GetIterator()
+            set optionsIter = filtervalue.options.%GetIterator(),used = 0
             while optionsIter.%GetNext(.optionsKey,.optionsValue) {               
                 if foundOne {
                     if optionsValue.checked = 0 {
                         set $BIT(bitstring,optionsValue."bit_position") = 0
+                        set used =  1
                     }
                 }
             }
+                if used,filtervalue.id>0 {
+                    set $BIT(usedFilters,filtervalue.id) = 1
+                }
             if foundOne && (foundOne'=countOptions) { 
                 //bijhouden of filters apart getest moeten worden
                 merge todo2 = foundOne
@@ -272,8 +290,8 @@ ClassMethod Counts() As %Status
         set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
         while index '= "" {
             // deze kunnen samen getest worden want er is geen enkele, of alle filters aangeduid.
-            set testName = $LIST(value,2), testBitstring = $LIST(value,1)
-            if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
+            set testName = $LIST(value,2), testBitstring = $LIST(value,1),filterBitstring = $LIST(value,3)
+            if ##class(BeI.API).TestFilter(bitstring,testBitstring)&& ##class(BeI.API).TestFilter(filterBitstring,usedFilters) {
                 s extracounter=extracounter+1
                 if (searchTerm = "") || (testName [ searchTerm)  {
                     set fKey = $ORDER(todo("")) 
@@ -339,8 +357,11 @@ ClassMethod Products() As %Status
     set sortDirection=filter.sort.direction
     set index = $ORDER(^INDEX("SORTORDER",sortField,""),sortDirection,value)
     while index '= "" {
-        set testName = $LIST(value,2), testBitstring = $LIST(value,1),bitcount = $BITCOUNT(testBitstring)
-        if ##class(BeI.API).TestFilter(filter.bitstring,testBitstring) {
+        set testName = $LIST(value,2), testBitstring = $LIST(value,1),bitcount = $BITCOUNT(testBitstring),filterBitstring = $LIST(value,3)
+        /*if index = 100000005290{
+            w ##class(BeI.Utils).ShowBitstring(filterBitstring),*9,##class(BeI.Utils).ShowBitstring(filter.usedFilters),!
+        }*/
+        if ##class(BeI.API).TestFilter(filter.bitstring,testBitstring) && ##class(BeI.API).TestFilter(filterBitstring,filter.usedFilters) {
             if (filter.searchTerm = "") || (testName [ filter.searchTerm)  {
                 if count >= (filter.pageSize * (filter.curPage-1)),count<(filter.pageSize * (filter.curPage)) {
                     set oProd=##class(BeI.API).GetProductFromIndex(index) 

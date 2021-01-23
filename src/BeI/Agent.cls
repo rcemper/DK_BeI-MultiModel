@@ -31,6 +31,10 @@ ClassMethod Run() As %Status
     set start = $zh
     do ##class(BeI.Agent).AddProducts(.attrValueCount)
     write *9,"Agent: Products finished in: ",$zh-start,!
+    write *9,"Agent: ProductsFilter",!
+    set start = $zh
+    do ##class(BeI.Agent).AddProducFilterBitstrings()
+    write *9,"Agent: ProductsFilter finished in: ",$zh-start,!
     write *9,"Agent: Counts",!
     set start = $zh
     do ##class(BeI.Agent).AddCountsToAttributeValues(.attrValueCount)
@@ -87,6 +91,22 @@ ClassMethod AddProducts(ByRef AttrValueCount) As %Status
     return ok
 }
 
+ClassMethod AddProducFilterBitstrings() As %Status
+{
+    &SQL(DECLARE bproducts CURSOR FOR SELECT id into:id FROM BeI.Product)
+    &SQL(OPEN bproducts)
+    while 'SQLCODE {
+        &SQL(FETCH bproducts)
+        i 'SQLCODE,id '= "" {
+            s prod = ##class(BeI.Product).%OpenId(id)
+            do prod.SetFilterBitstring()
+            if id = 5290 { w ##class(BeI.Utils).ShowBitstring(prod.FilterBitString),!}
+        }
+    }
+    &SQL(CLOSE bproducts)
+    return $$$OK
+}
+
 ClassMethod AddCountsToAttributeValues(ByRef AttrValueCount)
 {
     set id = $o(AttrValueCount(""),1,value)
@@ -114,7 +134,7 @@ ClassMethod BuildIndices() As %Status [ PublicList = (prod, idx) ]
             while key'="" {
                 set indir = ("idx="_order.IndexRule)
                 set @indir
-                set ^INDEX("SORTORDER",$zcvt(order.Field,"U"),idx) = $lb(prod.BitString,$ZCONVERT(prod.Name,"U"))
+                set ^INDEX("SORTORDER",$zcvt(order.Field,"U"),idx) = $lb(prod.BitString,$ZCONVERT(prod.Name,"U"),prod.FilterBitString)
                 set order = sorts.GetNext(.key)
             }
         }
