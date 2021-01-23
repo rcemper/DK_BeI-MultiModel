@@ -10,6 +10,11 @@ We've used a IRIS backend that is called via a REST-API from a react frontend ap
 As a test we've tried this on 1.000.001 products with about 100 filter posibilities.
 forcing a product to be the last entry and specifying a filter that would only match the last entry took 0.6 seconds to yield the result.
 
+## ZPM  
+The code for this application can be installed through ZMP. This will install all the classes needed and will run a seed command to seed a demo database containing 100000 records.
+
+Attention: The react front-end app is not included in the ZPM package.
+
 ## Dependencies
 This project has some dependencies:
    * Node
