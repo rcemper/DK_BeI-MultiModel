@@ -201,8 +201,8 @@ ClassMethod Counts() As %Status
     for i = 1:1:len {
         set $BIT(bitstring, i) = 1
     }
-    set todo = 0
-    s todo2 =0
+    set todo = 0,todocounter=0
+    s todo2 =0,todo2counter=0
     if %request.Content {
         set filterObj = {}.%FromJSON(%request.Content)
         set requestId = filterObj.requestId
@@ -234,14 +234,25 @@ ClassMethod Counts() As %Status
                     }
                 }
             }
-            if foundOne,foundOne '= countOptions { 
+            if foundOne && (foundOne'=countOptions) { 
                 //bijhouden of filters getest moeten worden
-                set todo = todo + 1
+                merge todo2 = foundOne
+                set todo2counter = todo2counter + 1
+            } else {
+                // misschien hier als foundOne gelijk is aan countOptions zorgen dat het niet apart maar in groep geteld wordt
+                set todocounter = todocounter + 1
+                merge todo = foundOne
             }
-            // misschien hier als foundOne gelijk is aan countOptions zorgen dat het niet apart maar in groep geteld wordt
-            merge todo2 = foundOne
-            set todo2 = todo2 + 1
         }
+
+        set counters.todo=0
+        if todocounter {
+            set counters.todo = todocounter
+        }
+
+        set counters.todo2=0
+        if todo2counter set counters.todo2 = todo2counter
+        
 
         set tests2 = 0
         set fKey = $ORDER(todo2(""))
@@ -259,10 +270,25 @@ ClassMethod Counts() As %Status
             
     }
 
-    if (todo) || (searchTerm '= "") {
+    if (todo2counter) || (searchTerm '= "") {
         set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
         while index '= "" {
-            set fKey = $ORDER(tests2(""),1,bitstring) // Test some bitstrings, but not all, some things are better tested at the 
+            set testName = $LIST(value,2), testBitstring = $LIST(value,1)
+            if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
+                if (searchTerm = "") || (testName [ searchTerm)  {
+                    set fKey = $ORDER(todo("")) 
+                    while fKey '= "" {  
+                        set oKey = $ORDER(todo(fKey,""),1,pos)
+                        while oKey '= "" {
+                            set counts(pos) = $GET(counts(pos)) + $BIT(testBitstring,pos)
+                            set oKey = $ORDER(todo(fKey,oKey),1,pos)
+                        }
+                        set fKey = $ORDER(todo(fKey)) 
+                    }
+                }
+            }
+
+            set fKey = $ORDER(tests2(""),1,bitstring) 
             while fKey '= "" {     
                 set testName = $LIST(value,2), testBitstring = $LIST(value,1)
                 if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
