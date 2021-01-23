@@ -111,6 +111,8 @@ function App() {
         if (productResult.requestId===productRequestID.current) {
           updateProductState(prevState => {
             return {...prevState,products: productResult.products, lastID: productResult.lastId, nextExists: productResult.hasNext, resultCount: productResult.totalCount}})
+        } else {
+          console.log("not using products result: "+productResult.requestId)
         }
       }
       filterCountID.current+=1;
@@ -133,6 +135,8 @@ function App() {
         if (countResult.requestId===filterCountID.current) {
           updateProductState(prevState => {
             return {...prevState,filterWithCounts:countResult.filters2}})
+          } else {
+            console.log("not using counts result: "+countResult.requestId)
           }
       }
       fetchCounts();
