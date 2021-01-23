@@ -251,19 +251,17 @@ ClassMethod Counts() As %Status
                 set $BIT(testBitstring,pos)=1
                 set oKey = $ORDER(todo2(fKey,oKey),1,pos)
             }
+            /// to naive at the moment. if we already are all on pos 1 then the counting can be done on the original bitstring. This could speed up considerably
             set tests2(fKey)=testBitstring
             set fKey = $ORDER(todo2(fKey))
         }
             
     }
-<<<<<<< HEAD
-    if todo || (searchTerm '= ""){
-=======
+
     if (todo) || (searchTerm '= "") {
->>>>>>> ee8b751d3f588bb91de55efea765399fc609e9ae
         set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
         while index '= "" {
-            set fKey = $ORDER(tests2(""))
+            set fKey = $ORDER(tests2(""),1,bitstring)
             while fKey '= "" {     
                 set testName = $LIST(value,2), testBitstring = $LIST(value,1)
                 if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
@@ -275,7 +273,7 @@ ClassMethod Counts() As %Status
                         }
                     }
                 }
-                set fKey = $ORDER(tests2(fKey))
+                set fKey = $ORDER(tests2(fKey),1,bitstring)
             }      
             set index = $ORDER(^INDEX("SORTORDER","ID",index),1,value)
         }
