@@ -336,7 +336,8 @@ ClassMethod Products() As %Status
     set result.filter = ##class(BeI.Utils).ShowBitstring(filter.bitstring)
     set count = 0
     set sortField=$ZCONVERT(filter.sort.field,"U")
-    set index = $ORDER(^INDEX("SORTORDER",sortField,""),1,value)
+    set sortDirection=filter.sort.direction
+    set index = $ORDER(^INDEX("SORTORDER",sortField,""),sortDirection,value)
     while index '= "" {
         set testName = $LIST(value,2), testBitstring = $LIST(value,1),bitcount = $BITCOUNT(testBitstring)
         if ##class(BeI.API).TestFilter(filter.bitstring,testBitstring) {
@@ -348,7 +349,7 @@ ClassMethod Products() As %Status
                 set count = count + 1
            }
         }
-        set index = $ORDER(^INDEX("SORTORDER",sortField,index),1,value)
+        set index = $ORDER(^INDEX("SORTORDER",sortField,index),sortDirection,value)
     }
     set result.totalCount = count
     set result.requestId = filter.requestId

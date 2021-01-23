@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { Header } from "./components/Header";
 import { Product } from "./components/Product";
@@ -15,9 +15,11 @@ import { Helmet } from 'react-helmet-async';
 function App() {
   const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), curPage:1, selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1}, pageSize: 15 });
   const [productState,updateProductState] = useState({products: Array<IProduct>(), nextExists: false,resultCount: 0, filterWithCounts: Array<IFilter>() });
-  const [requestState,updateRequestState] = useState({productRequestID:0,countRequestID:0});
   const [sortOrders,updateSortOrders] = useState({sortOrders: Array<ISortOrder>()});
   const pageSizes = [15,30,60];
+
+  let productRequestID=useRef(0);
+  let filterCountID=useRef(0);
   function onSearch(searchTerm : string) {
     /*
     const newProducts: IProduct[] = products.filter((product) =>
@@ -81,8 +83,7 @@ function App() {
   useEffect(() => {
     if (state.filters.length && state.selectedSortOrder?.field!=="") { 
       //console.log("state changed");
-      //updateRequestState(prevState => { 
-      //  return {...prevState, productRequestID: prevState.productRequestID+1}});
+      productRequestID.current+=1
       let payload = {
         "filters":state.filters,
         "sort": state.selectedSortOrder,
@@ -90,7 +91,7 @@ function App() {
         "pageDirection": state.pageDirection,
         "searchTerm": state.searchTerm,
         "curPage": state.curPage,
-        "requestId": requestState.productRequestID
+        "requestId": productRequestID.current
       };
       console.log(payload);
       const fetchProducts = async() => {
@@ -107,12 +108,13 @@ function App() {
           referrerPolicy: 'no-referrer',
           body: JSON.stringify(payload)}));
         console.log(productResult);
-        if (productResult.requestId===requestState.productRequestID) {
+        if (productResult.requestId===productRequestID.current) {
           updateProductState(prevState => {
             return {...prevState,products: productResult.products, lastID: productResult.lastId, nextExists: productResult.hasNext, resultCount: productResult.totalCount}})
         }
       }
-      payload.requestId=requestState.countRequestID
+      filterCountID.current+=1;
+      payload.requestId=filterCountID.current
       fetchProducts();
       const fetchCounts = async() => {
         const countResult=await fetchAPI(new Request("http://localhost:9092/BeI/counts",{
@@ -128,7 +130,7 @@ function App() {
           referrerPolicy: 'no-referrer',
           body: JSON.stringify(payload)}));
         console.log(countResult);
-        if (countResult.requestId===requestState.productRequestID) {
+        if (countResult.requestId===filterCountID.current) {
           updateProductState(prevState => {
             return {...prevState,filterWithCounts:countResult.filters2}})
           }
