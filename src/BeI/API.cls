@@ -267,13 +267,14 @@ ClassMethod Counts() As %Status
         }
             
     }
-
+    s extracounter=0
     if (todo2counter) || (searchTerm '= "") {
         set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
         while index '= "" {
             // deze kunnen samen getest worden want er is geen enkele, of alle filters aangeduid.
             set testName = $LIST(value,2), testBitstring = $LIST(value,1)
             if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
+                s extracounter=extracounter+1
                 if (searchTerm = "") || (testName [ searchTerm)  {
                     set fKey = $ORDER(todo("")) 
                     while fKey '= "" {  
@@ -287,10 +288,10 @@ ClassMethod Counts() As %Status
                 }
             }
             // test deze apart want we moeten filters veranderen om ze te testen
-            set fKey = $ORDER(tests2(""),1,bitstring) 
+            set fKey = $ORDER(tests2(""),1,newBitstring) 
             while fKey '= "" {     
                 set testName = $LIST(value,2), testBitstring = $LIST(value,1)
-                if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
+                if ##class(BeI.API).TestFilter(newBitstring,testBitstring) {
                     if (searchTerm = "") || (testName [ searchTerm)  {
                         set oKey = $ORDER(todo2(fKey,""),1,pos)
                         while oKey '= "" {
@@ -299,7 +300,7 @@ ClassMethod Counts() As %Status
                         }
                     }
                 }
-                set fKey = $ORDER(tests2(fKey),1,bitstring)
+                set fKey = $ORDER(tests2(fKey),1,newBitstring)
             }      
             set index = $ORDER(^INDEX("SORTORDER","ID",index),1,value)
         }
@@ -318,6 +319,7 @@ ClassMethod Counts() As %Status
     else {
         set counters.filters2 = xCounts
     }
+    set counters.extracounter = extracounter
     set counters.requestId = requestId
     set counters.searchTerm = searchTerm
     set counters.time = $zh - start
