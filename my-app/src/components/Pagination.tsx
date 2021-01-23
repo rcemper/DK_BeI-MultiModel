@@ -43,7 +43,7 @@ export function Pagination({curPage, lastPage, paginationCallback}: IPaginationP
             </li>
             }
             <li className="page-item active">
-                <button className="btn btn-outline-primary" >
+                <button className="btn btn-primary" >
                     <span aria-hidden="true">{curPage}</span>
                 </button>
             </li>
