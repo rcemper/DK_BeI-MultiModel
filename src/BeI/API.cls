@@ -235,11 +235,10 @@ ClassMethod Counts() As %Status
                 }
             }
             if foundOne && (foundOne'=countOptions) { 
-                //bijhouden of filters getest moeten worden
+                //bijhouden of filters apart getest moeten worden
                 merge todo2 = foundOne
                 set todo2counter = todo2counter + 1
             } else {
-                // misschien hier als foundOne gelijk is aan countOptions zorgen dat het niet apart maar in groep geteld wordt
                 set todocounter = todocounter + 1
                 merge todo = foundOne
             }
@@ -263,7 +262,6 @@ ClassMethod Counts() As %Status
                 set $BIT(testBitstring,pos)=1
                 set oKey = $ORDER(todo2(fKey,oKey),1,pos)
             }
-            /// to naive at the moment. if we already are all on pos 1 then the counting can be done on the original bitstring. This could speed up considerably
             set tests2(fKey)=testBitstring
             set fKey = $ORDER(todo2(fKey))
         }
@@ -273,6 +271,7 @@ ClassMethod Counts() As %Status
     if (todo2counter) || (searchTerm '= "") {
         set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
         while index '= "" {
+            // deze kunnen samen getest worden want er is geen enkele, of alle filters aangeduid.
             set testName = $LIST(value,2), testBitstring = $LIST(value,1)
             if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
                 if (searchTerm = "") || (testName [ searchTerm)  {
@@ -287,7 +286,7 @@ ClassMethod Counts() As %Status
                     }
                 }
             }
-
+            // test deze apart want we moeten filters veranderen om ze te testen
             set fKey = $ORDER(tests2(""),1,bitstring) 
             while fKey '= "" {     
                 set testName = $LIST(value,2), testBitstring = $LIST(value,1)
