@@ -9,6 +9,8 @@ Property Category As BeI.Category(POPORDER = 3);
 
 Property BitString As %String(POPORDER = 4);
 
+Property FilterBitString As %String;
+
 Property Attributes As array Of BeI.AttributeValue(POPORDER = 5, POPSPEC = ".PopulateAttributes()");
 
 /// cat index
@@ -63,6 +65,27 @@ Method SetBitstring() As %Status
         set attr = ..Attributes.GetNext(.key)
     }
     set ..BitString=BitString
+    do ..%Save(0)
+    return ok
+}
+
+Method SetFilterBitstring() As %Status
+{
+    set ok = $$$OK
+    set BitString = ""
+    set len = ##class(BeI.Attribute).GetAttributes().Count()
+    for i = 1:1:len {
+        set $BIT(BitString, i) = 0
+    }
+    if (..Category '= $$$NULLOREF){
+        set key = ""
+        set attr = ..Category.Attributes.GetNext(.key)
+        while key'="" {
+            set $BIT(BitString,attr.%Id()) = 1
+            set attr = ..Category.Attributes.GetNext(.key)
+        }
+    }
+    set ..FilterBitString = BitString
     do ..%Save(0)
     return ok
 }
@@ -133,6 +156,9 @@ Storage Default
 </Value>
 <Value name="5">
 <Value>Price</Value>
+</Value>
+<Value name="6">
+<Value>FilterBitString</Value>
 </Value>
 </Data>
 <DataLocation>^BeI.ProductD</DataLocation>
