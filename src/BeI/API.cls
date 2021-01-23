@@ -202,6 +202,7 @@ ClassMethod Counts() As %Status
         set $BIT(bitstring, i) = 1
     }
     set todo = 0
+    s todo2 =0
     if %request.Content {
         set filterObj = {}.%FromJSON(%request.Content)
         set requestId = filterObj.requestId
@@ -213,7 +214,7 @@ ClassMethod Counts() As %Status
             k foundOne
             s foundOne=0,countOptions=0
             while optionsIter.%GetNext(.optionsKey,.optionsValue){
-                set map(optionsValue."bit_position")=$lb(key,optionsKey)
+                set map(optionsValue."bit_position")=$lb(key,optionsValue.id)
                 set xopt = {}
                 set xopt.id = optionsValue.id
                 set xopt.count=optionsValue."product_count"
@@ -233,83 +234,57 @@ ClassMethod Counts() As %Status
                     }
                 }
             }
-            // end: building normal filter bitstring            
             if foundOne,foundOne '= countOptions { 
-                //bijhouden welke filters getest moeten worden
-                merge todo = foundOne
+                //bijhouden of filters getest moeten worden
                 set todo = todo + 1
             }
+            merge todo2 = foundOne
+            set todo2 = todo2 + 1
         }
-        set tests = 0
-        set fKey = $ORDER(todo(""))
+
+        set tests2 = 0
+        set fKey = $ORDER(todo2(""))
         while fKey '= "" {
             set testBitstring = bitstring
-            set oKey = $ORDER(todo(fKey,""),1,pos)
+            set oKey = $ORDER(todo2(fKey,""),1,pos)
             while oKey '= "" {
-                set $BIT(testBitstring,pos)=0
-                set oKey = $ORDER(todo(fKey,oKey),1,pos)
+                set $BIT(testBitstring,pos)=1
+                set oKey = $ORDER(todo2(fKey,oKey),1,pos)
             }
-            set oKey = $ORDER(todo(fKey,""),1,pos)
-            while oKey '= "" {
-                set newBitstring = testBitstring
-                set $BIT(newBitstring,pos)=1
-                set tests(fKey,oKey)=newBitstring
-                set oKey = $ORDER(todo(fKey,oKey),1,pos)
-            }
-            set fKey = $ORDER(todo(fKey))
+            set tests2(fKey)=testBitstring
+            set fKey = $ORDER(todo2(fKey))
         }
             
     }
-    if todo,searchTerm = "" {
+    if todo || (searchTerm '= ""){
         set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
         while index '= "" {
-            set testName = $LIST(value,2), testBitstring = $LIST(value,1)
-            if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
-                if (searchTerm = "") || (testName [ searchTerm)  {
-                    for i=1:1:len {
-                        set counts(i) = $GET(counts(i)) + $BIT(testBitstring,i)
-                    }
-               }
-            }
-            else {
-                set fKey = $ORDER(tests(""))
-                while fKey '= "" {
-                    set oKey = $ORDER(tests(fKey,""),1,value)
-                    while oKey '= "" {
-                        if ##class(BeI.API).TestFilter(value,testBitstring) {
-                            if (searchTerm = "") || (testName [ searchTerm)  {
-                                set idx = filterObj.filters.%Get(fKey).options.%Get(oKey)."bit_position"
-                                set counts(idx)=$GET(counts(idx)) + 1
-                            }
+            set fKey = $ORDER(tests2(""))
+            while fKey '= "" {     
+                set testName = $LIST(value,2), testBitstring = $LIST(value,1)
+                if ##class(BeI.API).TestFilter(bitstring,testBitstring) {
+                    if (searchTerm = "") || (testName [ searchTerm)  {
+                        set oKey = $ORDER(todo2(fKey,""),1,pos)
+                        while oKey '= "" {
+                            set counts(pos) = $GET(counts(pos)) + $BIT(testBitstring,pos)
+                            set oKey = $ORDER(todo2(fKey,oKey),1,pos)
                         }
-                        set oKey = $ORDER(tests(fKey,oKey),1,value)
                     }
-                    set fKey = $ORDER(tests(fKey))
                 }
-            }
+                set fKey = $ORDER(tests2(fKey))
+            }      
             set index = $ORDER(^INDEX("SORTORDER","ID",index),1,value)
-        }
-
-        for i=1:1:len {
-            set mapping = map(i)
-            set xfilter = filterObj.filters.%Get($LIST(mapping,1))
-            set xoption = xfilter.options.%Get($LIST(mapping,2))
-            set filterCounts(xfilter.id)=xfilter.name
-            set filterCounts(xfilter.id,xoption.id)=$LISTBUILD($GET(counts(i),0),xoption.name)
         }
     
         set counters.filters2 =[]
-        set filterId = $ORDER(filterCounts(""),1,filterName)
-        while filterId '= "" {
-            set optionId = $ORDER(filterCounts(filterId,""),1,filterVal)
-            while optionId '= "" {
-                set option = {}
-                set option.id = optionId
-                set option.count=$LIST(filterVal,1)
-                do counters.filters2.%Push(option)
-                set optionId = $ORDER(filterCounts(filterId,optionId),1,filterVal)
-            }
-            set filterId = $ORDER(filterCounts(filterId),1,filterName)
+        s i=$ORDER(counts(""),1,count)
+        while i'="" {
+            set option = {}
+            set option.id = $LIST(map(i),2)
+            set option.count=count
+            do counters.filters2.%Push(option)
+
+            s i=$ORDER(counts(i),1,count)
         }
     }
     else {

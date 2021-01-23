@@ -113,7 +113,7 @@ function App() {
         console.log(productResult);
         if (productResult.requestId===requestState.productRequestID) {
           updateProductState(prevState => {
-            return {...productState,products: productResult.products, lastID: productResult.lastId, nextExists: productResult.hasNext, resultCount: productResult.totalCount}})
+            return {...prevState,products: productResult.products, lastID: productResult.lastId, nextExists: productResult.hasNext, resultCount: productResult.totalCount}})
         }
       }
       payload.requestId=requestState.countRequestID
