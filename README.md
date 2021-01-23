@@ -78,3 +78,4 @@ in the root directory
 
 * Faster filter count speed
 * Splitting source data from the filter so the product is easier usable in other projects
+* boolean properties
