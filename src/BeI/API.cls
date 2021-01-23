@@ -256,7 +256,11 @@ ClassMethod Counts() As %Status
         }
             
     }
+<<<<<<< HEAD
     if todo || (searchTerm '= ""){
+=======
+    if (todo) || (searchTerm '= "") {
+>>>>>>> ee8b751d3f588bb91de55efea765399fc609e9ae
         set index = $ORDER(^INDEX("SORTORDER","ID",""),1,value)
         while index '= "" {
             set fKey = $ORDER(tests2(""))
@@ -291,6 +295,7 @@ ClassMethod Counts() As %Status
         set counters.filters2 = xCounts
     }
     set counters.requestId = requestId
+    set counters.searchTerm = searchTerm
     set counters.time = $zh - start
     write counters.%ToJSON()
     return result
@@ -310,7 +315,7 @@ ClassMethod Products() As %Status
         set testName = $LIST(value,2), testBitstring = $LIST(value,1),bitcount = $BITCOUNT(testBitstring)
         if ##class(BeI.API).TestFilter(filter.bitstring,testBitstring) {
             if (filter.searchTerm = "") || (testName [ filter.searchTerm)  {
-                if count > (filter.pageSize * (filter.curPage-1)),count<=(filter.pageSize * (filter.curPage)) {
+                if count >= (filter.pageSize * (filter.curPage-1)),count<(filter.pageSize * (filter.curPage)) {
                     set oProd=##class(BeI.API).GetProductFromIndex(index) 
                     do result.products.%Push(oProd)
                 } 

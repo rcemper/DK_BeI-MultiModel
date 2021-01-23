@@ -13,7 +13,7 @@ import {/*doesProductNameContain,*/changeFilterOptionChecked,fetchAPI} from "./u
 import { Helmet } from 'react-helmet-async';
 
 function App() {
-  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1}, pageSize: 9 });
+  const [state,updateState] = useState({searchTerm:"", filters: Array<IFilter>(), selectedSortOrder:{field:"",direction:1}, pageDirection:{id:"",direction:1}, pageSize: 15 });
   const [productState,updateProductState] = useState({products: Array<IProduct>(), curPage:1,nextExists: false,resultCount: 0, filterWithCounts: Array<IFilter>() });
   const [requestState,updateRequestState] = useState({productRequestID:0,countRequestID:0});
   const [sortOrders,updateSortOrders] = useState({sortOrders: Array<ISortOrder>()});
