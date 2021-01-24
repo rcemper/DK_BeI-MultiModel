@@ -308,8 +308,8 @@ ClassMethod Counts() As %Status
             // test deze apart want we moeten filters veranderen om ze te testen
             set fKey = $ORDER(tests2(""),1,newBitstring) 
             while fKey '= "" {     
-                set testName = $LIST(value,2), testBitstring = $LIST(value,1)
-                if ##class(BeI.API).TestFilter(newBitstring,testBitstring) {
+                set testName = $LIST(value,2), testBitstring = $LIST(value,1),filterBitstring = $LIST(value,3)
+                if ##class(BeI.API).TestFilter(newBitstring,testBitstring)&& ##class(BeI.API).TestFilter(filterBitstring,usedFilters) {
                     if (searchTerm = "") || (testName [ searchTerm)  {
                         set oKey = $ORDER(todo2(fKey,""),1,pos)
                         while oKey '= "" {
