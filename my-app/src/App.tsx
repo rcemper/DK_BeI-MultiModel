@@ -93,7 +93,7 @@ function App() {
         "curPage": state.curPage,
         "requestId": productRequestID.current
       };
-      console.log(payload);
+      //console.log(payload);
       const fetchProducts = async() => {
         const productResult=await fetchAPI(new Request("http://localhost:9092/BeI/products",{
           method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -107,7 +107,7 @@ function App() {
           redirect: 'follow', 
           referrerPolicy: 'no-referrer',
           body: JSON.stringify(payload)}));
-        console.log(productResult);
+        //console.log(productResult);
         if (productResult.requestId===productRequestID.current) {
           updateProductState(prevState => {
             return {...prevState,products: productResult.products, lastID: productResult.lastId, nextExists: productResult.hasNext, resultCount: productResult.totalCount}})
@@ -131,7 +131,7 @@ function App() {
           redirect: 'follow', 
           referrerPolicy: 'no-referrer',
           body: JSON.stringify(payload)}));
-        console.log(countResult);
+        //console.log(countResult);
         if (countResult.requestId===filterCountID.current) {
           updateProductState(prevState => {
             return {...prevState,filterWithCounts:countResult.filters2}})
