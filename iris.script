@@ -4,12 +4,13 @@
     // ** Comment out these two line for Production use **
     do ##class(Security.Users).UnExpireUserPasswords("*")
     zpm "install passwordless"
+    zpm "install iterm"
 
     zn "USER"
 
     // Create /_vscode web app to support intersystems-community.testingmanager VS Code extension
     zpm "install vscode-per-namespace-settings"
-    zpm "install webterminal"	
+    ; zpm "install webterminal"	
 
     zpm "load /home/irisowner/dev/ -v":1:1
     halt
